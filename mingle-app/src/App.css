@@ -1,0 +1,106 @@
+.error {
+    color: red;
+    text-align: left;
+    font-size: small;
+}
+
+.redirect {
+    text-decoration: none;
+    color: #ff69b4;
+}
+
+.redirect:hover {
+    color: #ff1493
+}
+
+.reactions {
+    font-size: x-small;
+    padding-left: 3px;
+}
+
+.greyBorder {
+    border: 1px solid #A3A3A3;
+}
+
+.signContainer {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    width: 85%;
+}
+
+.mediaHover {
+    position: relative;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.mediaHover:hover .hoverOverlay {
+    opacity: 1;
+}
+
+.mediaHover:hover .coverImage {
+    opacity: 0.7;
+}
+
+.hoverOverlay {
+    position: absolute;
+    bottom: 1rem;
+    /* Distance from the bottom */
+    right: 2rem;
+    /* Distance from the right */
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 4px 8px;
+    /* Padding around the text */
+    border-radius: 4px;
+    /* Rounded corners */
+    font-size: 1rem;
+    font-weight: bold;
+    opacity: 0.6;
+    /* Initially hidden */
+    transition: opacity 0.3s ease;
+}
+
+.article {
+    padding: 1rem;
+    white-space: pre-wrap;
+}
+
+.comment{
+    white-space: pre-wrap;
+}
+
+.tags {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.tags:hover {
+    text-decoration: underline;
+}
+
+.fixed {
+    height: 100vh;
+    overflow-y: auto;
+    position:sticky;
+    top: 12%;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+.notClickable{
+    cursor: default;
+}
+
+.centered{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
