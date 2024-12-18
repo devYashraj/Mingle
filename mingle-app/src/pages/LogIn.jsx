@@ -25,7 +25,6 @@ export default function LogIn() {
     const [snackAlert, setSnackAlert] = useState("");
 
     const login = (data) => {
-        setError("");
         console.log(data);
     }
 

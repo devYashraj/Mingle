@@ -52,6 +52,24 @@ export const myProfile = {
     follow: false
 }
 
+export const myProfile1 = {
+    firstName: "Kal",
+    lastName: "Wardin",
+    username: "kalwardin07",
+    email: "kalwardin@email.com",
+    avatar: "https://preview.redd.it/trying-to-come-up-with-a-new-avatar-for-my-various-social-v0-8fs49e6e1lsb1.jpg?width=519&format=pjpg&auto=webp&s=220d8e08781d7078c64e3ffc25382a18a87d5c98",
+    headline: "Early Bird | Synthwave enthusiast | Programmer 🚀🌇💻",
+    biography: "Immersed in the ocean of programming trying to solve real world problems by putting those brain cells to work.",
+    publicUrls: [
+        "https://github.com",
+        "https://leetcode.com"
+    ],
+    createdAt: new Date(2024, 10, 23, 16, 47, 22),
+    followers: 230,
+    following: 20,
+    follow: false
+}
+
 export const otherUserProfile = {
     fullName: "John Doe",
     username: "johndoe09",

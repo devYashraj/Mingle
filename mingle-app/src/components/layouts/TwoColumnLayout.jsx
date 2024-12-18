@@ -1,7 +1,7 @@
 import Grid  from "@mui/material/Grid2";
 import { Box } from "@mui/material";
 
-export default function ProfileLayout({ left, right }) {
+export default function TwoColumnLayout({hide=false, left, right }) {
     return (
         <>
             <Box sx={{m: 1, mt: 2 }}>
@@ -12,8 +12,9 @@ export default function ProfileLayout({ left, right }) {
                             height: {md: "100vh"},
                             position:{md : "sticky"},
                             overflowY: {md : "auto"},
-                            top: {md: "12%"}
+                            top: {md: "12%"},
                         }}
+                        display={hide && {xs : "none", sm:"none", md:"block"}}
                     >
                         {left}
                     </Grid>

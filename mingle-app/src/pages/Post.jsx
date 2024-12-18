@@ -1,4 +1,4 @@
-import FeedLayout from "../components/layouts/FeedLayout"
+import ThreeColumnLayout from "../components/layouts/ThreeColumnLayout"
 import PostTemplate from "../components/templates/PostTemplate"
 import ProfileTemplate from "../components/templates/ProfileTemplate"
 import TrendingTemplate from "../components/templates/TrendingTemplate"
@@ -20,7 +20,7 @@ export default function Post() {
 
     return (
         <>
-            <FeedLayout
+            <ThreeColumnLayout
                 left={<ProfileTemplate small={true} profileData={myProfile} />}
                 middle={
                     <>

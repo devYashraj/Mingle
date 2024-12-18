@@ -1,4 +1,4 @@
-import { Box, Avatar, Typography, Button } from "@mui/material";
+import { Box, Avatar, Typography, Button, Stack } from "@mui/material";
 import Divider from '@mui/material/Divider';
 import { Link } from 'react-router'
 import { useNavigate } from "react-router";
@@ -15,7 +15,7 @@ export default function ProfileTemplate({ profileData, small }) {
     const handleFollow = () => {
         //follow logic
         console.log("Here");
-        
+
         alert("Sending follow");
         setFollow(true);
     }
@@ -58,8 +58,8 @@ export default function ProfileTemplate({ profileData, small }) {
                     <Link className="tags"
                         to={
                             owner ?
-                                `../myprofile` :
-                                `../profile/${username}`
+                                `../myprofile/posts` :
+                                `../profile/${username}/posts`
                         }>
                         {username}
                     </Link>
@@ -69,7 +69,7 @@ export default function ProfileTemplate({ profileData, small }) {
                 </Typography>
                 {
                     small ?
-                        <Button variant="contained" onClick={()=>navigate("../myprofile")} sx={{ mt: 2 }}>View Profile</Button>
+                        <Button variant="contained" onClick={() => navigate("../myprofile")} sx={{ mt: 2 }}>View Profile</Button>
                         :
                         <>
                             <Divider />
@@ -93,8 +93,7 @@ export default function ProfileTemplate({ profileData, small }) {
                                 </Link>
                             </Typography>
                             <Divider />
-                            <Box sx={{ mt: 2, mb: 3, display: "flex", justifyContent: "space-between" }}>
-
+                            <Stack sx={{ mt: 2, mb: 3 }} direction="row" spacing={10}>
                                 <Typography variant="body1">
                                     {formatCount(followers) + " "}
                                     <Typography variant="caption">
@@ -107,11 +106,11 @@ export default function ProfileTemplate({ profileData, small }) {
                                         Following
                                     </Typography>
                                 </Typography>
-                            </Box>
+                            </Stack>
 
                             {
                                 owner ?
-                                    <Button variant="contained" onClick={()=>navigate("../myprofile")}>Edit Profile</Button>
+                                    <Button variant="contained" onClick={() => navigate("../myprofile")}>Edit Profile</Button>
                                     :
                                     <Button
                                         variant={follow ? "outlined" : "contained"}

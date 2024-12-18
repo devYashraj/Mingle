@@ -62,16 +62,17 @@ import Feed from './pages/Feed.jsx';
 import Post from './pages/Post.jsx';
 import AuthLayout from './components/layouts/AuthLayout.jsx';
 import Profile from './pages/Profile.jsx';
-import CommentList from './components/lists/CommentList.jsx';
 import MyProfile from './pages/MyProfile.jsx';
+import Create from './pages/Create.jsx';
+import ErrorPage from './utils/ErrorPage.jsx';
 
 const theme = createTheme(neonTheme);
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route path='/' element={<App />}>
+        <Route path='/' element={<App />} errorElement={<ErrorPage/>}>
 
-            <Route index element={<AuthLayout auth={true} />}/>
+            <Route index element={<AuthLayout auth={true} />} />
 
             <Route element={<AuthLayout auth={false} />}>
                 <Route path='login' element={<LogIn />} /> //done
@@ -83,6 +84,10 @@ const router = createBrowserRouter(
 
 
             <Route element={<MainLayout />}>
+
+                <Route element={<AuthLayout auth={true} />}>
+                    <Route path='create' element={<Create />} />
+                </Route>
 
                 <Route element={<AuthLayout auth={true} />}>
                     <Route path='feed' element={<Feed />} /> //done
@@ -97,14 +102,13 @@ const router = createBrowserRouter(
                 </Route>
 
                 <Route element={<AuthLayout auth={true} />}>
-                    <Route path='myprofile' element={<MyProfile/>} />
+                    <Route path='myprofile/:action' element={<MyProfile />} />
                 </Route>
 
                 <Route element={<AuthLayout auth={true} />}>
-                    <Route path='profile/:username' element={<Profile/>} />
+                    <Route path='profile/:username/:action' element={<Profile />} />
                 </Route>
 
-                <Route path='test/comment' element={<CommentList postId={"1234"}/>} />
             </Route>
 
         </Route>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 
-export default function FeedLayout({ left, middle, right }) {
+export default function ThreeColumnLayout({ left, middle, right }) {
     return (
         <Box sx={{ flexGrow: 1, m: 1, mt: 2 }}>
             <Grid container spacing={{ xs: 1, md: 1 }}>

@@ -80,7 +80,7 @@ export default function PostTemplate({ postData }) {
                 title={
                     <Link
                         to={
-                            username === myProfile.username ? `/myprofile` : `/profile/${username}`
+                            username === myProfile.username ? `/myprofile/posts` : `/profile/${username}/posts`
                         }
                         className='tags'
                     >
