@@ -7,7 +7,6 @@ export default function Loading(props) {
             <Box 
                 component="span" 
                 width="100%"
-                height="100vh"
                 className='centered'
             >
                 <CircularProgress {...props} />

@@ -10,11 +10,14 @@ export default function PostList({ feed = true, username }) {
 
     useEffect(() => {
         
-        setLoading(true);
-
         const getPosts = () => {
-            setPosts(postList)
-            setLoading(false);
+            try {
+                setPosts(postList)
+            } catch (error) {
+                
+            } finally{
+                setLoading(false);
+            }
         }
 
         getPosts();

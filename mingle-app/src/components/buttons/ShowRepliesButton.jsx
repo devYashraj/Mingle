@@ -40,7 +40,7 @@ export default function ShowRepliesButton({ commentId, ...rest }) {
                     fullName={myProfile.fullName}
                     handler={postReply}
                 />
-                <ReplyList styles={{bgcolor:"background.paper", pl:5}} />
+                <ReplyList commentId={commentId} styles={{bgcolor:"background.paper", pl:5}} />
             </Collapse>
         </>
     )

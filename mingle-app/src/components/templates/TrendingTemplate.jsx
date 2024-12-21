@@ -3,16 +3,36 @@ import { List, ListItem, ListItemText, ListItemAvatar } from '@mui/material';
 import { Link, useNavigate } from 'react-router'
 import { formatCount } from '../../utils/formatter.js'
 import NoData from '../../utils/NoData.jsx';
+import { useState, useEffect } from 'react';
+import Loading from '../../utils/Loading.jsx';
 
 import { sampleTrendingPosts } from '../../utils/sampleData.js';
 
 export default function TrendingTemplate() {
 
-    const trending = sampleTrendingPosts;
+    const [posts, setPosts] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const { posts, tags } = trending;
+    useEffect(()=>{
+        const getTrending = () =>{
+            try {
+                const trending = sampleTrendingPosts;
+                setPosts(trending.posts);
+                setTags(trending.tags);
+            } catch (error) {
+                
+            } finally{
+                setLoading(false);
+            }
+        }
+        getTrending();
+    },[]);
 
     const navigate = useNavigate();
+
+    if(loading)
+        return <Loading color='secondary' size='3rem'/>
 
     return (
         <>

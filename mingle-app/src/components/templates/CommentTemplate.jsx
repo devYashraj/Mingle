@@ -12,7 +12,7 @@ import DeleteButton from "../buttons/DeleteButton.jsx";
 import { myProfile, myProfile as userData } from "../../utils/sampleData";
 import { useState } from "react";
 
-export default function CommentTemplate({ postId, userId, comment }) {
+export default function CommentTemplate({ comment }) {
 
     const navigate = useNavigate();
 
@@ -22,15 +22,15 @@ export default function CommentTemplate({ postId, userId, comment }) {
         setLike(!like)
     }
 
-    // const owner = (userId === myProfile.username);
-    const owner = true;
+    const owner = (comment.username === myProfile.username);
+    // const owner = true;
 
     const handleProfileNavigate = (username) => {
         const myProfile = userData;
         if (myProfile.username === username)
-            navigate("/myprofile");
+            navigate("/myprofile/posts");
         else
-            navigate(`/profile/${username}`);
+            navigate(`/profile/${username}/posts`);
     }
 
     const handleCommentDelete = () => {
@@ -80,7 +80,6 @@ export default function CommentTemplate({ postId, userId, comment }) {
                 />
             </ListItem>
             {
-                postId?.length &&
                 <ShowRepliesButton
                     commentId={comment._id}
                     sx={{ m: 0, p: 0, ml: 7 }}

@@ -16,8 +16,9 @@ import Badge from '@mui/material/Badge';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import ChatIcon from '@mui/icons-material/Chat';
-
+import {useNavigate} from 'react-router'
 import { myProfile } from '../../utils/sampleData';
+import Settings from '../../utils/Settings';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -60,7 +61,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const settings = ['My Profile', 'My Network', 'Saved Posts', 'Logout'];
+const settings = ['My Profile', 'My Network', <Settings/>, 'Logout'];
 
 function handleSearchQuery(e){
     if(e.key === "Enter"){
@@ -71,7 +72,7 @@ function handleSearchQuery(e){
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+    const navigate = useNavigate();
     const [search, setSearch] = React.useState("");
 
     const handleSearch = (e) =>{
@@ -92,6 +93,13 @@ function Navbar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleNavigate = (s) => {
+        if(s === "My Profile")
+            navigate('/myprofile/posts');
+        else if(s === "My Network")
+            navigate('/mynetwork');
+    }
 
     return (
         <>
@@ -212,7 +220,12 @@ function Navbar() {
                             >
                                 {settings.map((setting) => (
                                     <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                                        <Typography component='div'
+                                            sx={{ textAlign: 'center' }} 
+                                            onClick={()=>handleNavigate(setting)}
+                                        >
+                                            {setting}
+                                        </Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>

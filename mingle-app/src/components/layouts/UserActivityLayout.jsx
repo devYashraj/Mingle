@@ -61,7 +61,7 @@ export default function UserActivityLayout({ self = true, username }) {
 
     const tabPanelsPrivate = {
         "posts": <PostList feed={false} />,
-        "comments": <ReplyList />,
+        "comments": <ReplyList self={true}/>,
         "edit-profile": <EditProfileTemplate />,
         "liked-posts": "Liked Posts",
         "liked-comments": "Liked Comments",
@@ -82,7 +82,7 @@ export default function UserActivityLayout({ self = true, username }) {
 
     const tabPanelsPublic = {
         "posts": <PostList feed={false} />,
-        "comments": <ReplyList />,
+        "comments": <ReplyList username={username}/>,
     }
 
     const routeMatch = useRouteMatch(
