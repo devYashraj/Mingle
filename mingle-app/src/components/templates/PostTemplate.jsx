@@ -20,6 +20,7 @@ import { myProfile } from '../../utils/sampleData';
 
 import ImageTemplate from './ImageTemplate';
 import ArticleTemplate from './ArticleTemplate';
+import VideoTemplate from './VideoTemplate';
 
 export default function PostTemplate({ postData }) {
 
@@ -109,6 +110,10 @@ export default function PostTemplate({ postData }) {
                 {
                     type === "article" &&
                     <ArticleTemplate article={article} onClick={handleRedirect}/>
+                }
+                {
+                    type === "video" &&
+                    <VideoTemplate urlList={mediafiles}/>
                 }
             </CardMedia>
             {description !== null &&

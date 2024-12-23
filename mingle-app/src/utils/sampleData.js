@@ -151,7 +151,26 @@ export const postList = [
         likesCount: 200,
         commentsCount: 300,
         saved: false
-    }
+    },
+    // {
+    //     _id: "12342",
+    //     fullName: "Kal Wardin",
+    //     username: "kalwardin07",
+    //     title: "Elephant is my spirit animal. 🐘🐘🐘",
+    //     type: "video",
+    //     description: "",
+    //     mediafiles: [
+    //         "https://res.cloudinary.com/dv7acrjow/video/upload/v1714737320/samples/elephants.mp4",
+    //         "https://res.cloudinary.com/dv7acrjow/video/upload/f_auto:video,q_auto/v1/samples/elephants"
+    //     ],
+    //     tags: ["#wildlife", "#elephants"],
+    //     createdAt: new Date(2024, 11, 20, 16, 47, 22),
+    //     avatar: "https://preview.redd.it/trying-to-come-up-with-a-new-avatar-for-my-various-social-v0-8fs49e6e1lsb1.jpg?width=519&format=pjpg&auto=webp&s=220d8e08781d7078c64e3ffc25382a18a87d5c98",
+    //     liked: true,
+    //     likesCount: 1500,
+    //     commentsCount: 500,
+    //     saved: true
+    // },
 ]
 
 export const sampleComments = [
