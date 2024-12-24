@@ -69,7 +69,7 @@ export default function ProfileTemplate({ profileData, small }) {
                 </Typography>
                 {
                     small ?
-                        <Button variant="contained" onClick={() => navigate("../myprofile")} sx={{ mt: 2 }}>View Profile</Button>
+                        <Button variant="contained" onClick={() => navigate("../myprofile/posts")} sx={{ mt: 2 }}>View Profile</Button>
                         :
                         <>
                             <Divider />
@@ -110,7 +110,7 @@ export default function ProfileTemplate({ profileData, small }) {
 
                             {
                                 owner ?
-                                    <Button variant="contained" onClick={() => navigate("../myprofile")}>Edit Profile</Button>
+                                    <Button variant="contained" onClick={() => navigate("../myprofile/edit-profile")}>Edit Profile</Button>
                                     :
                                     <Button
                                         variant={follow ? "outlined" : "contained"}

@@ -19,6 +19,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import {useNavigate} from 'react-router'
 import { myProfile } from '../../utils/sampleData';
 import Settings from '../../utils/Settings';
+import { Link } from 'react-router';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -112,8 +113,8 @@ function Navbar() {
                         <Typography
                             variant="h6"
                             noWrap
-                            component="a"
-                            href="#app-bar-with-responsive-menu"
+                            component={Link}
+                            to="/feed"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
@@ -144,8 +145,8 @@ function Navbar() {
                         <Typography
                             variant="h5"
                             noWrap
-                            component="a"
-                            href="#app-bar-with-responsive-menu"
+                            component={Link}
+                            to="/feed"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'flex', md: 'none' },

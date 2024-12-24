@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
+import {Link} from 'react-router';
 import Typography from '@mui/material/Typography';
 
 export default function Footer() {
@@ -14,7 +14,7 @@ export default function Footer() {
             }}
         >
             {'Copyright © '}
-            < Link color="inherit" href="https://mui.com/" >
+            <Link className='redirect' to="/" >
                 mingle
             </Link > {' '}
             {new Date().getFullYear()}

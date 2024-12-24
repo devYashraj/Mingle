@@ -5,6 +5,9 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import { themes } from '../utils/themes';
+import { useSelector, useDispatch } from 'react-redux';
+import { changeTheme } from '../features/theme/themeSlice';
 
 const style = {
     position: 'absolute',
@@ -19,14 +22,23 @@ const style = {
 };
 
 export default function Settings() {
+
+    const dispatch = useDispatch();
+    const initTheme = useSelector(state => state.theme.themeName); 
+    const [theme, setTheme] = React.useState(initTheme);
+    
     const [open, setOpen] = React.useState(false);
-    const [theme, setTheme] = React.useState('');
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
+    
     const handleChange = (event) => {
-        setTheme(event.target.value);
+        const newTheme = event.target.value; 
+        setTheme(newTheme);
+        dispatch(changeTheme(newTheme));
+        localStorage.setItem("mingle.theme",newTheme);
     };
+
+    const themeNames = Object.keys(themes);
 
     return (
         <div>
@@ -38,7 +50,7 @@ export default function Settings() {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <Typography sx={{ textAlign: 'center' }} id="modal-modal-title" variant="h6" component="h2">
                         Settings
                     </Typography>
                     <Typography component='div' id="modal-modal-description" sx={{ mt: 2 }}>
@@ -50,10 +62,9 @@ export default function Settings() {
                             label="theme"
                             onChange={handleChange}
                         >
-                            <MenuItem value={10}>Classic Light</MenuItem>
-                            <MenuItem value={20}>Calm Pastel</MenuItem>
-                            <MenuItem value={30}>Sleek Dark</MenuItem>
-                            <MenuItem value={30}>Vibrant Neon</MenuItem>
+                            {themeNames.map((i)=>
+                                <MenuItem key={i} value={i}>{i}</MenuItem>
+                            )}
                         </Select>
                     </Typography>
                 </Box>
