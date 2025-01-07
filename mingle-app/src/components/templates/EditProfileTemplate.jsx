@@ -9,6 +9,7 @@ import {
 import DeleteButton from '../buttons/DeleteButton';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import SendIcon from '@mui/icons-material/Send';
+import { VisuallyHiddenInput, urlGenerator } from '../../utils/commonFunctions';
 
 const schema = yup.object().shape({
     firstName: yup.string().required("First name is required").max(30, "First Name is too long"),
@@ -24,7 +25,9 @@ import { myProfile1 as myData } from '../../utils/sampleData';
 
 export default function EditProfileTemplate() {
     const myProfile = myData;
-    
+    const [myAvatar, setMyAvatar] = useState(myProfile.avatar);
+    const [avatarFile, setAvatarFile] = useState(null);
+
     const {
         control,
         handleSubmit,
@@ -63,7 +66,31 @@ export default function EditProfileTemplate() {
         }
     };
 
+    const handleAvatarChange = (e) => {
+        const files = e.target.files;
+        if(files?.length !== 0)
+        {
+            const url = urlGenerator(e.target.files)[0];
+            setMyAvatar(url);
+            setAvatarFile(files[0]);
+        }
+        else
+        {
+            setMyAvatar(myProfile.avatar);
+        }
+    }
+
     const onSubmit = (data) => {
+        if(myAvatar !== myProfile.avatar)
+        {
+            data.avatar = avatarFile;
+        }
+        delete data.username;
+        delete data.email;
+        delete data.createdAt;
+        delete data.follow;
+        delete data.followers;
+        delete data.following;
         console.log("Updated Profile Data:", data);
     };
 
@@ -71,8 +98,14 @@ export default function EditProfileTemplate() {
         <Container className="greyBorder" sx={{ p: 2 }}>
             <Box className="centered">
                 <Tooltip title="Upload New Avatar">
-                    <IconButton>
-                        <Avatar alt={myProfile.fullName} src="/demoAvatar.webp" sx={{ width: 72, height: 72 }} />
+                    <IconButton component='label' tabIndex={-1}>
+                        <Avatar alt={myProfile.fullName} src={myAvatar} sx={{ width: 72, height: 72 }} />  
+                        <VisuallyHiddenInput
+                            type='file'
+                            multiple={false}
+                            accept={'image/*'}
+                            onChange={handleAvatarChange}
+                        />
                     </IconButton>
                 </Tooltip>
                 <Typography sx={{ p: 1 }}>{`Username - @${myProfile.username}`}</Typography>

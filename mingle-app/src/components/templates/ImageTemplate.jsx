@@ -113,7 +113,7 @@ function ImageContainer({ imgList, handleClickOpen }) {
                 onClick={handleClickOpen}
             />
 
-            {more &&
+            {
                 <Typography className="hoverOverlay" onClick={handleClickOpen}>
                     +{more}
                 </Typography>
