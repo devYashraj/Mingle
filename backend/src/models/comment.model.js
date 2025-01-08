@@ -6,13 +6,17 @@ const commentSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-        content: {
+        text: {
             type: String,
             required: [true, "Comment cannot be empty"]
         },
         post: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post",
+        },
+        comment: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
         }
     },
     {

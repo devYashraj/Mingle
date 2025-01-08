@@ -15,11 +15,32 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
+        article: {
+            type: String,
+            validate: {
+                validator: function (value) {
+                    if(this.type === 'article'){
+                        return value !== null && value.trim().length > 0;
+                    }
+                    return true;
+                },
+                message : 'Article content is required'
+            }
+        },
         description: {
             type: String
         },
         mediaFile: {
-            type: String,
+            type: [String],
+            validate: {
+                validator: function (value) {
+                    if(this.type === 'image' || this.type === 'video'){
+                        return Array.isArray(value) && value.length > 0;
+                    }
+                    return true;
+                },
+                message: 'Media files are required!'
+            }
         },
         tags: {
             type: [String]
