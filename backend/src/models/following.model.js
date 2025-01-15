@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const followingSchema = new mongoose.Schema(
     {
@@ -15,5 +16,7 @@ const followingSchema = new mongoose.Schema(
         timestamps: true
     }
 )
+
+followingSchema.plugin(aggregatePaginate);
 
 export const Following = mongoose.model("Following",followingSchema);
