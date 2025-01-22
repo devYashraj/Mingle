@@ -4,18 +4,21 @@ import ApiError from '../utils/ApiError.js';
 import { User } from '../models/user.model.js';
 import { Following } from '../models/following.model.js';
 
-const follow = asyncHandler(async (req, res) => {
+const followUnfollowUser = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
 
     if (id === req.user._id.toString()) {
-        throw new ApiError(400, 'Cannot follow self');
+        throw new ApiError(400, 'Cannot follow or unfollow self');
     }
 
     const existingFollow = await Following.findOne({ leader: id, follower: req.user._id });
 
     if (existingFollow) {
-        throw new ApiError(400, 'Already following the user');
+        await Following.deleteOne({ leader: id, follower: req.user._id })
+
+        return res.status(200)
+            .json(new ApiResponse(200, {followedByMe: false}, 'Unfollowed user successfully'))
     }
 
     await Following.create({
@@ -24,27 +27,7 @@ const follow = asyncHandler(async (req, res) => {
     })
 
     return res.status(200)
-        .json(new ApiResponse(200, {}, 'Followed user successfully'))
-})
-
-const unfollow = asyncHandler(async (req, res) => {
-
-    const { id } = req.params;
-
-    if (id === req.user._id.toString()) {
-        throw new ApiError(400, "Cannot unfollow self");
-    }
-
-    const existingFollow = await Following.findOne({ leader: id, follower: req.user._id });
-
-    if (!existingFollow) {
-        throw new ApiError(400, "User has already been unfollowed");
-    }
-
-    await Following.deleteOne({ leader: id, follower: req.user._id })
-
-    return res.status(200)
-        .json(new ApiResponse(200, {}, 'Unfollowed user successfully'))
+        .json(new ApiResponse(200, {followedByMe: true}, 'Followed user successfully'))
 })
 
 const getFollowers = asyncHandler(async (req, res) => {
@@ -153,4 +136,4 @@ const getFollowing = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200,following,'Fetched following successfully'))
 })
 
-export { follow, unfollow, getFollowers, getFollowing}
+export { followUnfollowUser, getFollowers, getFollowing}

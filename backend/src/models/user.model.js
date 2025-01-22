@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema(
         },
         avatar: {
             type: String,
+            default: ""
         },
         fullname: {
             type: String,
@@ -37,12 +38,15 @@ const userSchema = new mongoose.Schema(
         },
         headline: {
             type: String,
+            default: ""
         },
         biography: {
-            type: String
+            type: String,
+            default: ""
         },
         publicUrls: {
-            type: [String]
+            type: [String],
+            default: []
         },
         savedPosts: [{
             type: mongoose.Schema.Types.ObjectId,

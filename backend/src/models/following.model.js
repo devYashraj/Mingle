@@ -5,11 +5,13 @@ const followingSchema = new mongoose.Schema(
     {
         follower:{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            index: true
         },
         leader:{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            index: true
         },
     },
     {

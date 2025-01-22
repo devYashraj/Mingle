@@ -22,8 +22,16 @@ export const uploadToCloudinary = async (localFilePath) => {
         return response;
     }
     catch(error){
-        console.log(error);
         fs.unlinkSync(localFilePath);
         return null
+    }
+}
+
+export const deleteFromCloudinary = async (publicId) => {
+
+    try {
+        await cloudinary.uploader.destroy(publicId);
+    } catch (error) {
+        return null;
     }
 }

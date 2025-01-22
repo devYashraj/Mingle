@@ -13,7 +13,8 @@ const postSchema = new mongoose.Schema(
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true
         },
         article: {
             type: String,
@@ -30,7 +31,7 @@ const postSchema = new mongoose.Schema(
         description: {
             type: String
         },
-        mediaFile: {
+        mediafiles: {
             type: [String],
             validate: {
                 validator: function (value) {

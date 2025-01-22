@@ -8,11 +8,13 @@ const likeSchema = new mongoose.Schema(
         },
         post: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Post"
+            ref: "Post",
+            index: true
         },
         comment: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment"
+            ref: "Comment",
+            index: true
         }
     },
     {

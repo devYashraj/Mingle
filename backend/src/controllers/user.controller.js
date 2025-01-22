@@ -2,7 +2,9 @@ import asyncHandler from '../utils/asyncHandler.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import ApiError from '../utils/ApiError.js';
 import { User } from '../models/user.model.js';
+import { Post } from '../models/post.model.js';
 import { uploadToCloudinary } from '../utils/cloudinary.js';
+import mongoose from 'mongoose';
 
 const getAccessAndRefreshTokens = async (id) => {
     try {
@@ -170,7 +172,6 @@ const changePassword = asyncHandler(async (req, res) => {
         throw new ApiError(400, 'Passwords are required')
     }
 
-    console.log(oldPassword, newPassword)
     const user = await User.findById(req.user._id);
 
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
@@ -307,7 +308,39 @@ const getMyProfileData = asyncHandler(async (req, res) => {
 
 })
 
+const saveUnsavePost = asyncHandler(async (req, res) => {
 
+    const { id } = req.params;
+
+    const post = await Post.findById(id);
+
+    if(!post){
+        throw new ApiError(404,"Post not found");
+    }
+
+    const existingSave = req.user.savedPosts.find((p) => p.equals(id));
+
+    if(existingSave){
+
+        await User.findByIdAndUpdate(
+            req.user._id,
+            { $pull: { savedPosts: { $in: [post._id] } }}
+        )
+
+        return res.status(200).json(
+            new ApiResponse(200,{saved:false},"Post unsaved successfully")
+        )
+    }
+
+    await User.findByIdAndUpdate(
+        {_id: req.user._id},
+        { $push: { savedPosts: post._id}}
+    )
+
+    return res.status(201).json(
+        new ApiResponse(201,{saved:true},"Post saved successfully")
+    )
+})
 export {
     registerUser,
     loginUser,
@@ -315,5 +348,6 @@ export {
     getUserProfileData,
     getMyProfileData,
     updateProfile,
-    changePassword
+    changePassword,
+    saveUnsavePost
 }

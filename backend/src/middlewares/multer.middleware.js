@@ -1,11 +1,13 @@
 import multer from 'multer';
+import { randomUUID } from 'crypto';
+import path from 'path';
 
 const storage = multer.diskStorage({
-    diskStorage: function (req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, "./public/temp")
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname)
+        cb(null, `${randomUUID()}${path.extname(file.originalname)}`)
     }
 })
 

@@ -6,7 +6,8 @@ import {
     getUserProfileData,
     getMyProfileData,
     updateProfile,
-    changePassword
+    changePassword,
+    saveUnsavePost
 } from '../controllers/user.controller.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/multer.middleware.js';
@@ -25,6 +26,7 @@ router.route('/update-profile').patch(
     upload.fields([{ name: 'avatar', maxCount: 1}]),
     updateProfile
 )
+router.route('/save/:id').post(verifyJwt,saveUnsavePost);
 router.route('/logout').post(verifyJwt, logoutUser);
 
 export default router;
