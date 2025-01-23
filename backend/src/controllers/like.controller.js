@@ -51,8 +51,8 @@ const likeUnlikeComment = asyncHandler(async(req, res) => {
         throw new ApiError(404, "Comment not found")
     }
 
-    const like = await Like.find({ owner: userId, comment: commentId});
-
+    const like = await Like.findOne({ owner: userId, comment: commentId});
+    
     if(like){
 
         await Like.deleteOne({

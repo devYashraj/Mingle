@@ -8,7 +8,8 @@ import {
     getFeedPosts,
     getPostsByUsername,
     getLikedPosts,
-    getSavedPosts
+    getSavedPosts,
+    saveUnsavePost
 } from '../controllers/post.controller.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/multer.middleware.js';
@@ -20,14 +21,15 @@ router.use(verifyJwt);
 router.route('/upload-image').post(upload.fields([{name: "media", maxCount: 4}]),uploadImage);
 router.route('/upload-video').post(upload.fields([{name: "media", maxCount: 1}]),uploadVideo);
 router.route('/upload-article').post(uploadArticle);
-
-router.route('/:id').delete(deletePost);
-
-router.route('/:id').get(getPostById);
+router.route('/save/:id').post(saveUnsavePost);
 
 router.route('/feed').get(getFeedPosts);
-router.route('/:username').get(getPostsByUsername);
 router.route('/liked').get(getLikedPosts);
 router.route('/saved').get(getSavedPosts);
+
+router.route('/:id').get(getPostById);
+router.route('/u/:username').get(getPostsByUsername);
+
+router.route('/:id').delete(deletePost);
 
 export default router;

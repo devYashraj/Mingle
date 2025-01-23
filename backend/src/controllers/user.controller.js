@@ -308,39 +308,6 @@ const getMyProfileData = asyncHandler(async (req, res) => {
 
 })
 
-const saveUnsavePost = asyncHandler(async (req, res) => {
-
-    const { id } = req.params;
-
-    const post = await Post.findById(id);
-
-    if(!post){
-        throw new ApiError(404,"Post not found");
-    }
-
-    const existingSave = req.user.savedPosts.find((p) => p.equals(id));
-
-    if(existingSave){
-
-        await User.findByIdAndUpdate(
-            req.user._id,
-            { $pull: { savedPosts: { $in: [post._id] } }}
-        )
-
-        return res.status(200).json(
-            new ApiResponse(200,{saved:false},"Post unsaved successfully")
-        )
-    }
-
-    await User.findByIdAndUpdate(
-        {_id: req.user._id},
-        { $push: { savedPosts: post._id}}
-    )
-
-    return res.status(201).json(
-        new ApiResponse(201,{saved:true},"Post saved successfully")
-    )
-})
 export {
     registerUser,
     loginUser,
@@ -349,5 +316,4 @@ export {
     getMyProfileData,
     updateProfile,
     changePassword,
-    saveUnsavePost
 }
