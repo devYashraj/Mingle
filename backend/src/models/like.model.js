@@ -5,7 +5,8 @@ const likeSchema = new mongoose.Schema(
     {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            index: true
         },
         post: {
             type: mongoose.Schema.Types.ObjectId,
