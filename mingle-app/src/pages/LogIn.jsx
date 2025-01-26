@@ -15,7 +15,11 @@ import { useForm } from 'react-hook-form'
 
 import FormError from '../components/alerts/FormError';
 
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+
+import { login as authLogin } from '../features/auth/authSlice.js';
+import { useDispatch } from 'react-redux';
+import { login as userLogin } from '../api/users.api.js';
 
 export default function LogIn() {
 
@@ -24,8 +28,22 @@ export default function LogIn() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [snackAlert, setSnackAlert] = useState("");
 
-    const login = (data) => {
-        console.log(data);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const login = async (data) => {
+        const {usernameOrEmail, password} = data;
+        const response = await userLogin(usernameOrEmail, password);
+        
+        if(response.statuscode === 200){
+            console.log(response.data);
+            
+            localStorage.setItem("mingleUserState",JSON.stringify(response.data.user))
+            localStorage.setItem("mingleAccessToken",response.data.accessToken)
+            localStorage.setItem("mingleRefreshToken",response.data.refreshToken)
+            dispatch(authLogin(response.data.user));
+            navigate('/');
+        }
     }
 
     return (
@@ -99,7 +117,6 @@ export default function LogIn() {
                     <Button
                         fullWidth
                         size='large'
-                        variant='outlined'
                         startIcon={<GoogleIcon />}
                     >
                         Login with Google

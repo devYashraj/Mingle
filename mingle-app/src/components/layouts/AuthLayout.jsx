@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router";
 import { LinearProgress } from "@mui/material";
+import { useSelector } from 'react-redux';
 
 export default function AuthLayout({auth=true}) {
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const authStatus = true;
-    console.log('Auth');
+    const authStatus = useSelector((state)=>state.auth.status);
     
     
     useEffect(()=>{

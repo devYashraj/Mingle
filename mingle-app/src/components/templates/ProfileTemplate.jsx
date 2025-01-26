@@ -27,7 +27,7 @@ export default function ProfileTemplate({ profileData, small }) {
     }
 
     const {
-        fullName,
+        fullname,
         username,
         email,
         avatar,
@@ -47,12 +47,12 @@ export default function ProfileTemplate({ profileData, small }) {
         <>
             <Box className="greyBorder" sx={{ p: 2 }}>
                 <Avatar
-                    alt={fullName}
+                    alt={fullname}
                     src={avatar}
                     sx={{ width: 56, height: 56 }}
                 />
                 <Typography variant="body1" sx={{ mt: 2 }}>
-                    {fullName}
+                    {fullname}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     <Link className="tags"

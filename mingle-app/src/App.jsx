@@ -22,7 +22,7 @@ import { themes } from './utils/themes.js';
 function Redirect() {
     const navigate = useNavigate();
     useEffect(() => {
-        navigate('/feed');
+        navigate('/login');
     }, [])
 }
 
