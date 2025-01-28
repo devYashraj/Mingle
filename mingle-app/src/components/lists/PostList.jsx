@@ -2,11 +2,13 @@ import { postList } from "../../utils/sampleData";
 import { useEffect, useState } from "react";
 import PostTemplate from '../templates/PostTemplate';
 import Loading from '../../utils/Loading.jsx';
+import { Button, Typography } from "@mui/material";
 
 export default function PostList({ feed = true, username }) {
 
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1)
 
     useEffect(() => {
         
@@ -19,9 +21,9 @@ export default function PostList({ feed = true, username }) {
                 setLoading(false);
             }
         }
-
+        
         getPosts();
-    }, [feed, username]);
+    }, [page, feed, username]);
 
 
     if (loading)
@@ -34,6 +36,15 @@ export default function PostList({ feed = true, username }) {
                     <PostTemplate key={postData._id} postData={postData} />
                 ))
             }
+            <Typography textAlign='center' p={2}>
+                <Button 
+                    variant="text" 
+                    color="secondary"
+                    onClick={()=>setPage(page+1)}
+                >
+                    Load More
+                </Button>
+            </Typography>
         </>
     )
 }

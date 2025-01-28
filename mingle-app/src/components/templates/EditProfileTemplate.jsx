@@ -21,13 +21,19 @@ const schema = yup.object().shape({
     )
 });
 
-import { myProfile1 as myData } from '../../utils/sampleData';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateMyProfile } from "../../api/users.api";
+import {login as authLogin} from '../../features/auth/authSlice';
+import { setSuccessAlert, setErrorAlert } from "../../features/alert/alertSlice";
 
 export default function EditProfileTemplate() {
-    const myProfile = myData;
+    const myProfile = useSelector((state)=>state.auth.userData);
     const [myAvatar, setMyAvatar] = useState(myProfile.avatar);
     const [avatarFile, setAvatarFile] = useState(null);
-
+    const firstName = myProfile.fullname.split(' ')[0]
+    const lastName = myProfile.fullname.split(' ')[1]
+    const dispatch = useDispatch();
+    const initialValues = {...myProfile, firstName, lastName};
     const {
         control,
         handleSubmit,
@@ -36,7 +42,7 @@ export default function EditProfileTemplate() {
         reset,
         formState: { errors },
     } = useForm({
-        defaultValues: myProfile,
+        defaultValues: initialValues,
         resolver: yupResolver(schema),
     });
 
@@ -80,7 +86,7 @@ export default function EditProfileTemplate() {
         }
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if(myAvatar !== myProfile.avatar)
         {
             data.avatar = avatarFile;
@@ -91,7 +97,16 @@ export default function EditProfileTemplate() {
         delete data.follow;
         delete data.followers;
         delete data.following;
-        console.log("Updated Profile Data:", data);
+        
+        try {
+            const response = await updateMyProfile(data);
+            if(response.statuscode === 200){
+                dispatch(authLogin(response.data));
+                dispatch(setSuccessAlert("Profile updated. Please refresh!"));
+            }
+        } catch (error) {
+            dispatch(setErrorAlert(error?.response?.data?.message))
+        }
     };
 
     return (
@@ -99,7 +114,7 @@ export default function EditProfileTemplate() {
             <Box className="centered">
                 <Tooltip title="Upload New Avatar">
                     <IconButton component='label' tabIndex={-1}>
-                        <Avatar alt={myProfile.fullName} src={myAvatar} sx={{ width: 72, height: 72 }} />  
+                        <Avatar alt={myProfile.fullname} src={myAvatar} sx={{ width: 72, height: 72 }} />  
                         <VisuallyHiddenInput
                             type='file'
                             multiple={false}

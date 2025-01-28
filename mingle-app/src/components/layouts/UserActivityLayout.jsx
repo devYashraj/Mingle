@@ -9,6 +9,7 @@ import { useParams } from 'react-router';
 import ReplyList from '../lists/ReplyList';
 import PostList from '../lists/PostList';
 import EditProfileTemplate from '../templates/EditProfileTemplate';
+import ChangePassword from '../templates/ChangePassword';
 
 function useRouteMatch(patterns) {
     const { pathname } = useLocation();
@@ -66,7 +67,7 @@ export default function UserActivityLayout({ self = true, username }) {
         "liked-posts": "Liked Posts",
         "liked-comments": "Liked Comments",
         "saved-posts": "Saved Posts",
-        "change-password": "Change Password",
+        "change-password": <ChangePassword/>,
     }
 
     const tabListPublic = [

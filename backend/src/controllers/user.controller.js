@@ -197,9 +197,15 @@ const getUserProfileData = asyncHandler(async (req, res) => {
         throw new ApiError(400, 'Username is required')
     }
 
+    const user = await User.findOne({username})
+
+    if(!user) {
+        throw new ApiError(404,"User not found");
+    }
+
     const profileData = await User.aggregate([
         {
-            $match: { username: "tester1" }
+            $match: { username: username }
         },
         {
             $lookup: {

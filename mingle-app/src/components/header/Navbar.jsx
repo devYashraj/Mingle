@@ -17,9 +17,12 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import ChatIcon from '@mui/icons-material/Chat';
 import {useNavigate} from 'react-router'
-import { myProfile } from '../../utils/sampleData';
 import Settings from '../../utils/Settings';
 import { Link } from 'react-router';
+import GlobalAlert from '../alerts/GlobalAlert';
+import { logout as authLogout } from '../../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout as userLogout } from '../../api/users.api';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -76,6 +79,9 @@ function Navbar() {
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("");
 
+    const myProfile = useSelector((state)=> state.auth.userData)
+    const dispatch = useDispatch();
+    
     const handleSearch = (e) =>{
         setSearch(e.target.value);
     }
@@ -95,11 +101,26 @@ function Navbar() {
         setAnchorElUser(null);
     };
 
+    const handleLogout = async () => {
+        try {
+            const response = await userLogout();
+            if(response.statuscode === 200){
+                dispatch(authLogout())
+                navigate('/login')
+            }
+        } 
+        catch (error) {
+            console.log(error);
+        }
+    }
+
     const handleNavigate = (s) => {
         if(s === "My Profile")
             navigate('/myprofile/posts');
         else if(s === "My Network")
             navigate('/mynetwork');
+        else if(s === "Logout")
+            handleLogout();
     }
 
     return (
@@ -194,7 +215,7 @@ function Navbar() {
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar
-                                        alt={myProfile.fullName}
+                                        alt={myProfile.fullname}
                                         src={myProfile.avatar}
                                         sx={{
                                             bgcolor: "background.paper",
@@ -234,6 +255,7 @@ function Navbar() {
                     </Toolbar>
                 </Container>
             </AppBar>
+            <GlobalAlert/>
         </>
     );
 }

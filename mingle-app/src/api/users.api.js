@@ -8,11 +8,54 @@ const login = asyncHandler(async (usernameOrEmail, password) => {
         { username: usernameOrEmail, email: usernameOrEmail, password }
     )
 
-    const { token } = response.data;
-    localStorage.setItem("mingleAuthToken", token);
+    return response.data;
+})
+
+const register = asyncHandler(async (data) => {
+    const response = await apiClient.post('/users/register', data);
+
+    return response.data;
+})
+
+const logout = asyncHandler(async () => {
+    const response = await apiClient.post('/users/logout');
+    return response.data;
+})
+
+const getMyProfileData = asyncHandler(async () => {
+    const response = await apiClient.get('/users/myprofile');
+    return response.data;
+})
+
+const getUserProfileData = asyncHandler(async (username) => { 
+    const response = await apiClient.get(`/users/profile/${username}`);
+    return response.data;
+})
+
+const updateMyProfile = asyncHandler(async (data) =>{
+
+    const response = await apiClient.patch('/users/update-profile', data, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    })
+
+    return response.data;
+})
+
+const changePassword = asyncHandler(async (data) => {
+
+    const response = await apiClient.patch('/users/change-password', data);
+
     return response.data;
 })
 
 export {
-    login
+    login,
+    register,
+    logout,
+    getMyProfileData,
+    getUserProfileData,
+    updateMyProfile,
+    changePassword
 }

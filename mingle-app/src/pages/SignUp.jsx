@@ -14,7 +14,13 @@ import { useForm } from 'react-hook-form'
 
 import FormError from '../components/alerts/FormError';
 
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+
+import { register as registerUser} from '../api/users.api.js'
+
+import { setErrorAlert, setSuccessAlert } from '../features/alert/alertSlice.js';
+import { useDispatch } from 'react-redux';
+import BasicAlert from '../components/alerts/BasicAlert.jsx';
 
 export default function Navbar() {
 
@@ -24,8 +30,32 @@ export default function Navbar() {
 
     const password = watch("password");
 
-    const signUp = (data) => {
-        console.log(data);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [signUpAlert, setSignUpAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [severity, setSeverity] = useState("success");
+
+    const signUp = async (data) => {
+        try {
+            const response = await registerUser(data);
+
+            if(response.statuscode === 201){
+                setAlertMessage("Registered Successfully. Please login")
+                setSignUpAlert(true)
+                setSeverity("success");
+                setTimeout(()=>{
+                    navigate('/login');
+                },1500)
+            }
+        } catch (error) {
+            if(error?.status === 409){
+                setAlertMessage("Username or email already in use")
+                setSeverity("error");
+                setSignUpAlert(true)
+            }
+        }
     }
 
     return (
@@ -95,12 +125,28 @@ export default function Navbar() {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 12, md: 12 }}>
                             <TextField
+                                label='Username'
+                                type='text'
+                                error={errors.username && true}
+                                fullWidth
+                                {...register("username", {
+                                    required: true,
+                                    maxLength: 30,
+                                })}
+                            />
+                            {errors.username && errors.username.type === 'required' && (
+                                <FormError message="Username is required" />
+                            )}
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 12, md: 12 }}>
+                            <TextField
                                 label='Password'
                                 type={pwdVisibility ? "text" : "password"}
                                 error={errors.password && true}
                                 fullWidth
                                 {...register("password", {
-                                    required: true
+                                    required: true,
+                                    minLength: 8
                                 })}
                                 slotProps={{
                                     input: {
@@ -114,6 +160,9 @@ export default function Navbar() {
                             />
                             {errors.password && errors.password.type === 'required' && (
                                 <FormError message="Password is required" />
+                            )}
+                            {errors.password && errors.password.type === 'minLength' && (
+                                <FormError message="Password is too short" />
                             )}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 12, md: 12 }}>
@@ -160,6 +209,7 @@ export default function Navbar() {
                 Already have an account? 
                 <Link to={"/login"} className='redirect'> Sign in to your account</Link> 
             </Typography>
+            <BasicAlert open={signUpAlert} message={alertMessage} severity={severity} setOpen={setSignUpAlert}/>
         </>
     )
 }

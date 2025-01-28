@@ -20,9 +20,12 @@ const authSlice = createSlice({
         login: (state, action) => {
             state.status = true;
             state.userData = action.payload;
-            
+            localStorage.setItem("mingleUserState",JSON.stringify(action.payload));
         },
         logout: (state, action) => {
+            localStorage.removeItem("mingleUserState")
+            localStorage.removeItem("mingleAccessToken")
+            localStorage.removeItem("mingleRefreshToken")
             state.status = false;
             state.userData = null
         }

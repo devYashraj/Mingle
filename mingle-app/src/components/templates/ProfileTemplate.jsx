@@ -3,15 +3,14 @@ import Divider from '@mui/material/Divider';
 import { Link } from 'react-router'
 import { useNavigate } from "react-router";
 import { useState } from "react";
-
+import { useSelector } from "react-redux";
 import { formatCount } from "../../utils/formatter";
-
-import { myProfile } from "../../utils/sampleData";
 
 export default function ProfileTemplate({ profileData, small }) {
 
     const navigate = useNavigate();
-
+    const myProfile = useSelector((state)=>state.auth.userData)
+    
     const handleFollow = () => {
         //follow logic
         console.log("Here");
@@ -35,13 +34,13 @@ export default function ProfileTemplate({ profileData, small }) {
         biography,
         publicUrls,
         createdAt,
-        followers,
-        following,
-        connected
+        followersCount,
+        followingCount,
+        followedByMe
     } = profileData;
 
     const owner = myProfile.username === username;
-    const [follow, setFollow] = useState(connected);
+    const [follow, setFollow] = useState(followedByMe);
 
     return (
         <>
@@ -95,13 +94,13 @@ export default function ProfileTemplate({ profileData, small }) {
                             <Divider />
                             <Stack sx={{ mt: 2, mb: 3 }} direction="row" spacing={10}>
                                 <Typography variant="body1">
-                                    {formatCount(followers) + " "}
+                                    {formatCount(followersCount) + " "}
                                     <Typography variant="caption">
                                         Followers
                                     </Typography>
                                 </Typography>
                                 <Typography variant="body1">
-                                    {formatCount(following) + " "}
+                                    {formatCount(followingCount) + " "}
                                     <Typography variant="caption">
                                         Following
                                     </Typography>

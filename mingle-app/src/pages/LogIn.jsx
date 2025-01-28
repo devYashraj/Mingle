@@ -18,6 +18,7 @@ import FormError from '../components/alerts/FormError';
 import { Link, useNavigate } from 'react-router';
 
 import { login as authLogin } from '../features/auth/authSlice.js';
+import { setErrorAlert, setSuccessAlert } from '../features/alert/alertSlice.js'
 import { useDispatch } from 'react-redux';
 import { login as userLogin } from '../api/users.api.js';
 
@@ -32,17 +33,19 @@ export default function LogIn() {
     const navigate = useNavigate();
 
     const login = async (data) => {
-        const {usernameOrEmail, password} = data;
-        const response = await userLogin(usernameOrEmail, password);
-        
-        if(response.statuscode === 200){
-            console.log(response.data);
+        try {
+            const {usernameOrEmail, password} = data;
+            const response = await userLogin(usernameOrEmail, password);
             
-            localStorage.setItem("mingleUserState",JSON.stringify(response.data.user))
-            localStorage.setItem("mingleAccessToken",response.data.accessToken)
-            localStorage.setItem("mingleRefreshToken",response.data.refreshToken)
-            dispatch(authLogin(response.data.user));
-            navigate('/');
+            if(response.statuscode === 200){
+                localStorage.setItem("mingleAccessToken",response.data.accessToken)
+                localStorage.setItem("mingleRefreshToken",response.data.refreshToken)
+                dispatch(authLogin(response.data.user));
+                dispatch(setSuccessAlert("Logged in successfully"));
+                navigate('/');
+            }
+        } catch (error) {
+            dispatch(setErrorAlert(error?.response?.data?.message))
         }
     }
 
