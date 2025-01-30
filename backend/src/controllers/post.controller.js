@@ -294,6 +294,9 @@ const getLikedPosts = asyncHandler(async (req, res) => {
             $match: { owner: req.user._id, comment: null}
         },
         {
+            $sort: { createdAt: -1}
+        },
+        {
             $lookup: {
                 from: "posts",
                 localField: "post",
@@ -333,32 +336,11 @@ const getSavedPosts = asyncHandler(async (req, res) => {
 
     const { page = 1} = req.query;
 
-    const aggregate = User.aggregate([
+    const aggregate = Post.aggregate([
         {
-            $match: { _id: req.user._id}
+            $match: { _id: {$in: req.user.savedPosts}}
         },
-        {
-            $lookup: {
-                from: "posts",
-                localField: "savedPosts",
-                foreignField: "_id",
-                as: "post",
-                pipeline: [
-                    ...postAggregationPipelines(req.user._id,req.user.savedPosts)
-                ]
-            }
-        },
-        {
-            $addFields: {
-                postData : { $arrayElemAt: ["$post",0]}
-            }
-        },
-        {
-            $project: {
-                postData: 1,
-                _id: 0
-            }
-        }
+        ...postAggregationPipelines(req.user._id,req.user.savedPosts)
     ])
 
     const options = {
@@ -366,13 +348,12 @@ const getSavedPosts = asyncHandler(async (req, res) => {
         limit: 10
     }
 
-    const savedPosts = await User.aggregatePaginate(aggregate,options);
-
+    const savedPosts = await Post.aggregatePaginate(aggregate,options);
+    
     return res.status(200).json(
         new ApiResponse(200,savedPosts,"Saved posts fetched successfully")
     )
 })
-
 const saveUnsavePost = asyncHandler(async (req, res) => {
 
     const { id } = req.params;

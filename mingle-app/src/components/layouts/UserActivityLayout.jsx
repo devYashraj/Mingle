@@ -10,6 +10,16 @@ import ReplyList from '../lists/ReplyList';
 import PostList from '../lists/PostList';
 import EditProfileTemplate from '../templates/EditProfileTemplate';
 import ChangePassword from '../templates/ChangePassword';
+import { useSelector } from 'react-redux';
+import { 
+    getPostsByUsername, 
+    getLikedPosts, 
+    getSavedPosts 
+} from '../../api/posts.api';
+import {
+    getCommentsByUsername,
+    getLikedComments
+} from '../../api/comments.api';
 
 function useRouteMatch(patterns) {
     const { pathname } = useLocation();
@@ -28,6 +38,8 @@ function useRouteMatch(patterns) {
 export default function UserActivityLayout({ self = true, username }) {
 
     const { action } = useParams();
+    const myprofile = useSelector((state)=>state.auth.userData);
+    const refreshId = crypto.randomUUID();
 
     const tabListPrivate = [
         {
@@ -61,12 +73,12 @@ export default function UserActivityLayout({ self = true, username }) {
     ];
 
     const tabPanelsPrivate = {
-        "posts": <PostList feed={false} />,
-        "comments": <ReplyList self={true}/>,
+        "posts": <PostList func={(page)=>getPostsByUsername(myprofile.username,page)} refreshId={refreshId}/>,
+        "comments": <ReplyList func={(page)=>getCommentsByUsername(myprofile.username,page)} refreshId={refreshId}/>,
         "edit-profile": <EditProfileTemplate />,
-        "liked-posts": "Liked Posts",
-        "liked-comments": "Liked Comments",
-        "saved-posts": "Saved Posts",
+        "liked-posts": <PostList func={(page)=>getLikedPosts(page)} refreshId={refreshId}/>,
+        "liked-comments": <ReplyList func={(page)=>getLikedComments(page)} refreshId={refreshId}/>,
+        "saved-posts": <PostList func={(page)=>getSavedPosts(page)} refreshId={refreshId}/>,
         "change-password": <ChangePassword/>,
     }
 
@@ -82,7 +94,7 @@ export default function UserActivityLayout({ self = true, username }) {
     ];
 
     const tabPanelsPublic = {
-        "posts": <PostList feed={false} />,
+        "posts": <PostList func={(page)=>getPostsByUsername(username,page)} refreshId={refreshId}/>,
         "comments": <ReplyList username={username}/>,
     }
 

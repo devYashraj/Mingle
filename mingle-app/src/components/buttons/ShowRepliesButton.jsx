@@ -2,20 +2,29 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { IconButton, Typography, Collapse } from '@mui/material';
 import { useState } from 'react';
-
 import ReplyList from '../lists/ReplyList';
 import CommentInput from '../inputs/CommentInput';
+import { getCommentReplies, postReply as postReplyByCommentId } from '../../api/comments.api';
 
-import { myProfile } from '../../utils/sampleData';
-
-export default function ShowRepliesButton({ commentId, ...rest }) {
+export default function ShowRepliesButton({ myProfile, commentId, ...rest}) {
 
     const [open, setOpen] = useState(false);
 
     const [reply, setReply] = useState("");
 
-    const postReply = () =>{
-        console.log("Sending reply to ",commentId);
+    const [refresh, setRefresh] = useState(crypto.randomUUID());
+
+    const postReply = async () =>{
+        try {
+            const response = await postReplyByCommentId(commentId, reply);
+            if(response.statuscode === 201){
+                setReply("");
+                setRefresh(crypto.randomUUID());
+            }
+        } 
+        catch (error) {
+            
+        }
     }
 
     return (
@@ -40,7 +49,11 @@ export default function ShowRepliesButton({ commentId, ...rest }) {
                     fullName={myProfile.fullName}
                     handler={postReply}
                 />
-                <ReplyList commentId={commentId} styles={{bgcolor:"background.paper", pl:5}} />
+                <ReplyList 
+                    func={(page)=>getCommentReplies(commentId,page)}
+                    refreshId={refresh}
+                    styles={{bgcolor:"background.paper", pl:5}} 
+                />
             </Collapse>
         </>
     )

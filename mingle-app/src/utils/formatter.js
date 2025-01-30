@@ -1,5 +1,6 @@
-export function formatDate(date) {
+export function formatDate(dateStr) {
   const now = new Date();
+  const date = new Date(dateStr);
   const diffMs = now - date;
   const diffSeconds = Math.floor(diffMs / 1000);
   const diffMinutes = Math.floor(diffSeconds / 60);

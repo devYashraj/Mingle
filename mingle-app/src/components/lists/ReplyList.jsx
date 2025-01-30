@@ -1,31 +1,44 @@
 import * as React from 'react';
-import { List, Container } from '@mui/material';
+import { List, Container, Typography, Button } from '@mui/material';
 import NoData from '../../utils/NoData';
 import ReplyTemplate from '../templates/ReplyTemplate'
 import { useState, useEffect } from 'react';
 import Loading from '../../utils/Loading';
 
-import { sampleComments as comments } from '../../utils/sampleData';
-
-export default function RepliesTemplate({self=false, username, commentId, styles }) {
-    //if self=true get self comments else of username
-    //if commentId=true get replies to commentId;
+export default function RepliesTemplate({func, refreshId, styles }) {
+    
     const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [more, setMore] = useState(false);
+
+    const getComments = async (currentPage) =>{
+        try {
+            setLoading(true);
+            const response = await func(currentPage);
+            
+            if(response.statuscode === 200){
+                const {docs, hasNextPage} = response.data;
+
+                if(currentPage === 1){
+                    setReplies(docs)
+                }
+                else{
+                    setReplies((prevReplies)=>[...prevReplies,...docs])
+                }
+
+                setMore(hasNextPage);
+            }
+        } catch (error) {
+            
+        }finally{
+            setLoading(false);
+        }
+    }
 
     useEffect(()=>{
-        const getComments = () =>{
-            try {
-                const newComments = comments;
-                setReplies(newComments);
-            } catch (error) {
-                
-            }finally{
-                setLoading(false);
-            }
-        }
-        getComments();
-    },[self,username,commentId])
+        getComments(page);
+    },[page,refreshId])
 
     if(loading)
         return <Loading color="secondary" size="2rem" />
@@ -44,6 +57,18 @@ export default function RepliesTemplate({self=false, username, commentId, styles
                     :
                     <NoData textAlign="center" variant="subtitle1" />
             }
+            <Typography textAlign='center' p={2}>
+            {
+                more &&
+                <Button 
+                    variant="text" 
+                    color="secondary"
+                    onClick={() => setPage((prevPage) => prevPage + 1)}
+                >
+                    Load More
+                </Button>
+            }
+            </Typography>
         </>
     );
 }

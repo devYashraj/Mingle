@@ -8,6 +8,8 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux'
+import { setErrorAlert } from '../../features/alert/alertSlice';
 
 import LikeButton from '../buttons/LikeButton';
 import CommentButton from '../buttons/CommentButton';
@@ -16,11 +18,12 @@ import ShareButton from '../buttons/ShareButton';
 import DeleteButton from '../buttons/DeleteButton';
 
 import { formatDate } from '../../utils/formatter';
-import { myProfile } from '../../utils/sampleData';
 
 import ImageTemplate from './ImageTemplate';
 import ArticleTemplate from './ArticleTemplate';
 import VideoTemplate from './VideoTemplate';
+
+import { likePost, savePost } from '../../api/posts.api';
 
 export default function PostTemplate({ postData }) {
 
@@ -45,20 +48,49 @@ export default function PostTemplate({ postData }) {
     } = postData;
 
     const [like, setLike] = React.useState(liked);
+    const [likes, setLikes] = React.useState(likesCount);
     const [save, setSave] = React.useState(saved);
     
-    //get data from redux state
-    const owner = false;
+    const myProfile = useSelector((state)=>state.auth.userData); 
+    const owner = myProfile.username === username;
+    const dispatch = useDispatch();
 
-    const handleSave = () => {
-        setSave(!save);
+    const handleSave = async () => {
+        try {
+            const response = await savePost(_id);
+            if(response.statuscode === 201){
+                setSave(true)
+            }
+            else if(response.statuscode === 200) {
+                setSave(false);
+            }
+            
+        } catch (error) {
+            dispatch(setErrorAlert(error?.response?.data?.message))
+        }
     }
     
-    const handleLike = () => {
-        setLike(!like);
+    const handleLike = async () => {
+        try {
+            const response = await likePost(_id);
+            if(response.statuscode === 200){
+                const { liked } = response.data;
+                if(liked){
+                    setLike(true);
+                    setLikes((like)=>like+1);
+                }
+                else{
+                    setLike(false);
+                    setLikes((like)=>like-1);
+                }
+            }
+            
+        } catch (error) {
+            dispatch(setErrorAlert(error?.response?.data?.message))
+        }
     }
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
 
     }
 
@@ -67,7 +99,7 @@ export default function PostTemplate({ postData }) {
     }
 
     return (
-        <Card sx={{ background: "none" }} className='greyBorder'>
+        <Card sx={{ background: "none" }} className='greyBorder post'>
             <CardHeader
                 avatar={
                     <Avatar
@@ -97,7 +129,7 @@ export default function PostTemplate({ postData }) {
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {tags.map((tag, i) => (
                         <Link key={i} to={`../tag/${tag.substring(1)}`} className='tags'>
-                            {tag + " "}
+                            {'#' + tag + " "}
                         </Link>
                     ))}
                 </Typography>
@@ -128,7 +160,7 @@ export default function PostTemplate({ postData }) {
 
                     <LikeButton
                         liked={like}
-                        likesCount={likesCount}
+                        likesCount={likes}
                         onClick={handleLike}
                     />
 

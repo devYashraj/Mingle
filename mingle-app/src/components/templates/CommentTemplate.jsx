@@ -8,22 +8,24 @@ import ShowRepliesButton from "../buttons/ShowRepliesButton.jsx";
 import LikeButton from "../buttons/LikeButton.jsx";
 import CommentButton from "../buttons/CommentButton.jsx";
 import DeleteButton from "../buttons/DeleteButton.jsx";
-
-import { myProfile, myProfile as userData } from "../../utils/sampleData";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function CommentTemplate({ comment }) {
 
     const navigate = useNavigate();
 
     const [like, setLike] = useState(comment.liked)
+    const [likes, setLikes] = useState(comment.likesCount)
 
-    const handleLike = () => {
+    const myProfile = useSelector((state)=>state.auth.userData);
+
+    const handleLike = async () => {
         setLike(!like)
     }
 
     const owner = (comment.username === myProfile.username);
-    // const owner = true;
+
 
     const handleProfileNavigate = (username) => {
         const myProfile = userData;
@@ -76,12 +78,13 @@ export default function CommentTemplate({ comment }) {
                     likesCount={comment.likesCount}
                 />
                 <CommentButton
-                    commentsCount={comment.replies}
+                    commentsCount={comment.commentsCount}
                 />
             </ListItem>
             {
                 <ShowRepliesButton
                     commentId={comment._id}
+                    myProfile={myProfile}
                     sx={{ m: 0, p: 0, ml: 7 }}
                 />
             }

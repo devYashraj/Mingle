@@ -208,3 +208,21 @@
 .editor{
   margin: 0.5rem
 }
+
+
+.post-list {
+  flex-direction: column;
+}
+
+.post {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

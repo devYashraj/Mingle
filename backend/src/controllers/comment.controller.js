@@ -128,7 +128,7 @@ const getPostComments = asyncHandler(async(req, res) => {
             $match: { post: post._id}
         },
         {
-            $sort: { createdAt: 1 }
+            $sort: { createdAt: -1 }
         },
         ...commentAggregationPipelines(req.user._id),
     ])
@@ -195,7 +195,7 @@ const getUserComments = asyncHandler(async(req, res) => {
             $match: {owner: user._id}
         },
         {
-            $sort: { createdAt: 1}
+            $sort: { createdAt: -1}
         },
         ...commentAggregationPipelines(req.user._id),
         {
