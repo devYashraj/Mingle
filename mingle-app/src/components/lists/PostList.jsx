@@ -3,6 +3,7 @@ import PostTemplate from '../templates/PostTemplate';
 import Loading from '../../utils/Loading.jsx';
 import { Button, Typography } from "@mui/material";
 import NoData from '../../utils/NoData.jsx';
+import { useSelector } from "react-redux";
 
 export default function PostList({ func, refreshId }) {
 
@@ -10,6 +11,7 @@ export default function PostList({ func, refreshId }) {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1)
     const [more, setMore] = useState(false);
+    const myProfile = useSelector((state)=>state.auth.userData);
 
     const getPosts = async (currentPage) => {
         try {
@@ -47,7 +49,7 @@ export default function PostList({ func, refreshId }) {
             <div className="post-list">
             {   
                 posts.map((postData) => (
-                    <PostTemplate key={postData._id} postData={postData} />
+                    <PostTemplate key={postData._id} postData={postData} myProfile={myProfile}/>
                 ))
             }
             </div>

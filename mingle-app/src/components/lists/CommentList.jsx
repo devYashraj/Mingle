@@ -4,6 +4,7 @@ import CommentTemplate from '../templates/CommentTemplate';
 import { useState, useEffect } from 'react';
 import Loading from '../../utils/Loading';
 import { getPostComments } from '../../api/comments.api';
+import { useSelector } from 'react-redux';
 
 export default function CommentList({postId, refresh}) {    
 
@@ -11,6 +12,8 @@ export default function CommentList({postId, refresh}) {
     const [loading, setLoading] = useState(true);
     const [more, setMore] = useState(false);
     const [page, setPage] = useState(1);
+    const myProfile = useSelector((state)=>state.auth.userData);
+
     
     const getComments = async (currentPage) => {
         try {
@@ -47,7 +50,7 @@ export default function CommentList({postId, refresh}) {
                     <List className='greyBorder' sx={{ width: '100%' }}>
                         {comments.map((comment, i) => (
                             <Container key={i} sx={{ m: 0, p: 0 }}>
-                                <CommentTemplate comment={comment} />
+                                <CommentTemplate comment={comment} myProfile={myProfile}/>
                             </Container>
                         ))}
                     </List>

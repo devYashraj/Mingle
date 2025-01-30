@@ -4,6 +4,7 @@ import NoData from '../../utils/NoData';
 import ReplyTemplate from '../templates/ReplyTemplate'
 import { useState, useEffect } from 'react';
 import Loading from '../../utils/Loading';
+import { useSelector } from 'react-redux';
 
 export default function RepliesTemplate({func, refreshId, styles }) {
     
@@ -11,6 +12,7 @@ export default function RepliesTemplate({func, refreshId, styles }) {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [more, setMore] = useState(false);
+    const myProfile = useSelector((state)=>state.auth.userData);
 
     const getComments = async (currentPage) =>{
         try {
@@ -50,7 +52,7 @@ export default function RepliesTemplate({func, refreshId, styles }) {
                     <List className='greyBorder' sx={{ width: '100%', ...styles }}>
                         {replies.map((reply, i) => (
                             <Container key={i} sx={{ m: 0, p: 0 }}>
-                                <ReplyTemplate reply={reply} />
+                                <ReplyTemplate reply={reply} myProfile={myProfile}/>
                             </Container>
                         ))}
                     </List>

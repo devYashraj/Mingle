@@ -23,9 +23,10 @@ import ImageTemplate from './ImageTemplate';
 import ArticleTemplate from './ArticleTemplate';
 import VideoTemplate from './VideoTemplate';
 
-import { likePost, savePost } from '../../api/posts.api';
+import { savePost } from '../../api/posts.api';
+import { likeUnlikePost } from '../../api/likes.api';
 
-export default function PostTemplate({ postData }) {
+export default function PostTemplate({ postData, myProfile }) {
 
     const navigate = useNavigate();
 
@@ -50,8 +51,7 @@ export default function PostTemplate({ postData }) {
     const [like, setLike] = React.useState(liked);
     const [likes, setLikes] = React.useState(likesCount);
     const [save, setSave] = React.useState(saved);
-    
-    const myProfile = useSelector((state)=>state.auth.userData); 
+     
     const owner = myProfile.username === username;
     const dispatch = useDispatch();
 
@@ -72,7 +72,7 @@ export default function PostTemplate({ postData }) {
     
     const handleLike = async () => {
         try {
-            const response = await likePost(_id);
+            const response = await likeUnlikePost(_id);
             if(response.statuscode === 200){
                 const { liked } = response.data;
                 if(liked){
@@ -86,6 +86,8 @@ export default function PostTemplate({ postData }) {
             }
             
         } catch (error) {
+            console.log(error);
+            
             dispatch(setErrorAlert(error?.response?.data?.message))
         }
     }

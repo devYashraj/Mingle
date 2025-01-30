@@ -8,10 +8,6 @@ const getFeed = asyncHandler(async (page) => {
 
 })
 
-const likePost = asyncHandler(async (postId) => {
-    const response = await apiClient.post(`/like/post/${postId}`);
-    return response.data;
-}) 
 
 const savePost = asyncHandler(async (postId) => {
     const response = await apiClient.post(`/posts/save/${postId}`)
@@ -44,7 +40,6 @@ const getPostById = asyncHandler(async (postID) => {
 
 export {
     getFeed,
-    likePost,
     savePost,
     getPostsByUsername,
     getLikedPosts,

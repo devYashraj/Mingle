@@ -95,7 +95,7 @@ export default function UserActivityLayout({ self = true, username }) {
 
     const tabPanelsPublic = {
         "posts": <PostList func={(page)=>getPostsByUsername(username,page)} refreshId={refreshId}/>,
-        "comments": <ReplyList username={username}/>,
+        "comments": <ReplyList func={(page)=>getCommentsByUsername(username,page)} refreshId={refreshId}/>,
     }
 
     const routeMatch = useRouteMatch(

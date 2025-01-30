@@ -7,18 +7,40 @@ import Typography from '@mui/material/Typography';
 import LikeButton from '../buttons/LikeButton';
 import DeleteButton from '../buttons/DeleteButton';
 import { useState } from 'react';
+import { likeUnlikeComment } from "../../api/likes.api.js";
+import { useNavigate } from 'react-router';
 
-
-export default function ReplyTemplate({ reply }) {
+export default function ReplyTemplate({ reply, myProfile }) {
 
     const [like, setLike] = useState(reply.liked)
-
-    const handleLike = () => {
-        setLike(!like)
+    const [likes, setLikes] = useState(reply.likesCount)
+    const navigate = useNavigate();
+    
+    const handleLike = async () => {
+        try {
+            const response = await likeUnlikeComment(reply._id);
+            const { liked } = response.data;
+            if(liked){   
+                setLike(true);
+                setLikes((like)=>like+1)
+            }
+            else{
+                setLike(false);
+                setLikes((like)=>like-1)
+            }
+        } catch (error) {
+            
+        }
     }
 
-    // const owner = reply._id === "myId";
-    const owner = true;
+    const handleProfileNavigate = (username) => {
+        if (myProfile.username === username)
+            navigate("/myprofile/posts");
+        else
+            navigate(`/profile/${username}/posts`);
+    }
+
+    const owner = reply.owner === myProfile._id;
     
     return (
         <>
@@ -39,7 +61,10 @@ export default function ReplyTemplate({ reply }) {
                 </ListItemAvatar>
                 <ListItemText
                     primary={
-                        <Typography component="div" variant='caption' className='tags'>
+                        <Typography component="div" variant='caption' className='tags'
+                            onClick={() => handleProfileNavigate(reply.username)}
+                        >
+                            
                             {"@" + reply.username}
                         </Typography>
                     }
@@ -54,7 +79,7 @@ export default function ReplyTemplate({ reply }) {
                 <LikeButton
                     onClick={handleLike}
                     liked={like}
-                    likesCount={reply.likesCount}
+                    likesCount={likes}
                 />
             </ListItem>
             <Divider component="li" />

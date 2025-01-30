@@ -69,7 +69,7 @@ export default function Post() {
                     <Loading color='secondary' size='4rem'/>
                     :
                     <>
-                        <PostTemplate postData={postData} />
+                        <PostTemplate postData={postData} myProfile={myProfile}/>
                         <CommentInput
                             value={comment}
                             onChange={(e)=>setComment(e.target.value)}

@@ -9,26 +9,37 @@ import LikeButton from "../buttons/LikeButton.jsx";
 import CommentButton from "../buttons/CommentButton.jsx";
 import DeleteButton from "../buttons/DeleteButton.jsx";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { likeUnlikeComment } from "../../api/likes.api.js";
 
-export default function CommentTemplate({ comment }) {
+export default function CommentTemplate({ comment, myProfile }) {
 
     const navigate = useNavigate();
 
     const [like, setLike] = useState(comment.liked)
     const [likes, setLikes] = useState(comment.likesCount)
 
-    const myProfile = useSelector((state)=>state.auth.userData);
 
     const handleLike = async () => {
-        setLike(!like)
+        try {
+            const response = await likeUnlikeComment(comment._id);
+            const { liked } = response.data;
+            if(liked){   
+                setLike(true);
+                setLikes((like)=>like+1)
+            }
+            else{
+                setLike(false);
+                setLikes((like)=>like-1)
+            }
+        } catch (error) {
+            
+        }
     }
 
     const owner = (comment.username === myProfile.username);
 
 
     const handleProfileNavigate = (username) => {
-        const myProfile = userData;
         if (myProfile.username === username)
             navigate("/myprofile/posts");
         else
@@ -75,7 +86,7 @@ export default function CommentTemplate({ comment }) {
                 <LikeButton
                     onClick={handleLike}
                     liked={like}
-                    likesCount={comment.likesCount}
+                    likesCount={likes}
                 />
                 <CommentButton
                     commentsCount={comment.commentsCount}
