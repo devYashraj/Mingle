@@ -16,13 +16,14 @@ import Badge from '@mui/material/Badge';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import ChatIcon from '@mui/icons-material/Chat';
-import {useNavigate} from 'react-router'
+import {useNavigate, createSearchParams} from 'react-router'
 import Settings from '../../utils/Settings';
 import { Link } from 'react-router';
 import GlobalAlert from '../alerts/GlobalAlert';
 import { logout as authLogout } from '../../features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout as userLogout } from '../../api/users.api';
+import SearchInput from '../../utils/SearchInput';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -67,11 +68,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const settings = ['My Profile', 'My Network', <Settings/>, 'Logout'];
 
-function handleSearchQuery(e){
-    if(e.key === "Enter"){
-        alert("Searching something")
-    }
-}
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -82,6 +78,18 @@ function Navbar() {
     const myProfile = useSelector((state)=> state.auth.userData)
     const dispatch = useDispatch();
     
+    function handleSearchQuery(e,search){
+        if(e.key === "Enter"){
+            navigate({
+                pathname: "search",
+                search: createSearchParams({
+                        search: search
+                    }).toString()
+                
+            })
+        }
+    }
+
     const handleSearch = (e) =>{
         setSearch(e.target.value);
     }
@@ -150,17 +158,7 @@ function Navbar() {
                         </Typography>
 
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={() => alert("Input something")}
-                                color="inherit"
-                            >
-                                <SearchIcon />
-                            </IconButton>
-
+                            <SearchInput/>
                         </Box>
                         <EmojiPeopleIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                         <Typography
@@ -191,7 +189,7 @@ function Navbar() {
                                     inputProps={{ 'aria-label': 'search' }}
                                     onChange={handleSearch}
                                     value={search}
-                                    onKeyDown={handleSearchQuery}
+                                    onKeyDown={(e)=>handleSearchQuery(e,search)}
                                 />
                             </Search>
                         </Box>

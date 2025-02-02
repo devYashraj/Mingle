@@ -11,6 +11,8 @@ import LogIn from './pages/LogIn.jsx';
 import MainLayout from './components/layouts/MainLayout.jsx';
 
 import Feed from './pages/Feed.jsx';
+import Search from './pages/Search.jsx';
+import Tags from './pages/Tags.jsx';
 import Post from './pages/Post.jsx';
 import AuthLayout from './components/layouts/AuthLayout.jsx';
 import Profile from './pages/Profile.jsx';
@@ -57,15 +59,19 @@ export default function App() {
                                 </Route>
 
                                 <Route element={<AuthLayout auth={true} />}>
-                                    <Route path='feed' element={<Feed />} /> //done
+                                    <Route path='search' element={<Search />} />
                                 </Route>
 
                                 <Route element={<AuthLayout auth={true} />}>
-                                    <Route path='tag/:tagName' element={<div>Tag Search Results</div>} />
+                                    <Route path='feed' element={<Feed />} /> 
                                 </Route>
 
                                 <Route element={<AuthLayout auth={true} />}>
-                                    <Route path='post/:postID' element={<Post />} /> //done
+                                    <Route path='tag/:tag' element={<Tags/>} />
+                                </Route>
+
+                                <Route element={<AuthLayout auth={true} />}>
+                                    <Route path='post/:postID' element={<Post />} /> 
                                 </Route>
 
                                 <Route element={<AuthLayout auth={true} />}>

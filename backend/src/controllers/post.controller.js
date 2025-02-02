@@ -368,6 +368,36 @@ const getSearchPosts = asyncHandler(async (req, res) => {
         {
             $match: { $text: { $search: search}}
         },
+        {
+            $sort: { createdAt : -1}
+        },
+        ...postAggregationPipelines(req.user._id,req.user.savedPosts)
+    ])
+
+    const options = {
+        page: parseInt(page),
+        limit: 1
+    }
+
+    const posts = await Post.aggregatePaginate(aggregate,options);
+
+    return res.status(200).json(
+        new ApiResponse(200,posts,"Posts fetched succesfully")
+    )
+})
+
+const getPostsByTag = asyncHandler(async (req, res) => {
+
+    const { tag } = req.params; 
+    const { page = 1 } = req.query;
+
+    const aggregate = Post.aggregate([
+        {
+            $match: { tags : {$in: [tag]}}
+        },
+        {
+            $sort: { createdAt : -1}
+        },
         ...postAggregationPipelines(req.user._id,req.user.savedPosts)
     ])
 
@@ -379,7 +409,7 @@ const getSearchPosts = asyncHandler(async (req, res) => {
     const posts = await Post.aggregatePaginate(aggregate,options);
 
     return res.status(200).json(
-        new ApiResponse(200,posts,"Posts fetched succesfully")
+        new ApiResponse(200,posts,"Posts fetched successfully for given tag")
     )
 })
 
@@ -428,5 +458,6 @@ export {
     getLikedPosts,
     getSavedPosts,
     getSearchPosts,
+    getPostsByTag,
     saveUnsavePost
 }

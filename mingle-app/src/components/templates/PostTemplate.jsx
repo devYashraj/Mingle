@@ -138,7 +138,7 @@ export default function PostTemplate({ postData, myProfile }) {
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {tags.map((tag, i) => (
-                        <Link key={i} to={`../tag/${tag.substring(1)}`} className='tags'>
+                        <Link key={i} to={`../tag/${tag.substring(0)}`} className='tags'>
                             {'#' + tag + " "}
                         </Link>
                     ))}

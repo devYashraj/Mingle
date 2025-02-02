@@ -37,6 +37,11 @@ const getPostById = asyncHandler(async (postID) => {
     return response.data;
 })
 
+const getSearchPosts = asyncHandler(async (search, page) => {
+    const response = await apiClient.get(`/posts/search/?search=${search}&page=${page}`)
+    return response.data;
+})
+
 const deletePost = asyncHandler(async (postID) => {
     const response = await apiClient.delete(`/posts/${postID}`);
     return response.data;
@@ -69,6 +74,11 @@ const uploadArticle = asyncHandler(async (data) => {
     return response.data;
 })
 
+const getPostsByTag = asyncHandler(async (tag, page) => {
+    const response = await apiClient.get(`/posts/tag/${tag}?page=${page}`);
+    return response.data;
+})
+
 export {
     getFeed,
     savePost,
@@ -79,5 +89,7 @@ export {
     deletePost,
     uploadImage,
     uploadVideo,
-    uploadArticle
+    uploadArticle,
+    getSearchPosts,
+    getPostsByTag
 }
