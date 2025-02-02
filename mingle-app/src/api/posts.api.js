@@ -8,7 +8,6 @@ const getFeed = asyncHandler(async (page) => {
 
 })
 
-
 const savePost = asyncHandler(async (postId) => {
     const response = await apiClient.post(`/posts/save/${postId}`)
     return response.data;
@@ -38,11 +37,47 @@ const getPostById = asyncHandler(async (postID) => {
     return response.data;
 })
 
+const deletePost = asyncHandler(async (postID) => {
+    const response = await apiClient.delete(`/posts/${postID}`);
+    return response.data;
+})
+
+const uploadImage = asyncHandler(async (data) => {
+    const response = await apiClient.post(`/posts/upload-image`, data, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+    return response.data;
+})
+
+const uploadVideo = asyncHandler(async (data) => {
+    const response = await apiClient.post(`/posts/upload-video`, data, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+    return response.data;
+})
+
+const uploadArticle = asyncHandler(async (data) => {
+    const response = await apiClient.post(`/posts/upload-article`, data, {
+        headers: {
+            "Content-Type" : "application/json"
+        }
+    });
+    return response.data;
+})
+
 export {
     getFeed,
     savePost,
     getPostsByUsername,
     getLikedPosts,
     getSavedPosts,
-    getPostById
+    getPostById,
+    deletePost,
+    uploadImage,
+    uploadVideo,
+    uploadArticle
 }

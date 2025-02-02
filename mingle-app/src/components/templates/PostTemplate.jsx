@@ -8,14 +8,14 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router';
-import { useDispatch, useSelector } from 'react-redux'
-import { setErrorAlert } from '../../features/alert/alertSlice';
+import { useDispatch } from 'react-redux'
+import { setErrorAlert, setSuccessAlert } from '../../features/alert/alertSlice';
 
 import LikeButton from '../buttons/LikeButton';
 import CommentButton from '../buttons/CommentButton';
 import SaveButton from '../buttons/SaveButton';
 import ShareButton from '../buttons/ShareButton';
-import DeleteButton from '../buttons/DeleteButton';
+import DeleteConfirmation from '../alerts/DeleteConfirmation';
 
 import { formatDate } from '../../utils/formatter';
 
@@ -23,7 +23,7 @@ import ImageTemplate from './ImageTemplate';
 import ArticleTemplate from './ArticleTemplate';
 import VideoTemplate from './VideoTemplate';
 
-import { savePost } from '../../api/posts.api';
+import { savePost, deletePost } from '../../api/posts.api';
 import { likeUnlikePost } from '../../api/likes.api';
 
 export default function PostTemplate({ postData, myProfile }) {
@@ -93,7 +93,15 @@ export default function PostTemplate({ postData, myProfile }) {
     }
 
     const handleDelete = async () => {
-
+        try {
+            const response = await deletePost(postData._id);
+            if(response.statuscode === 200){
+                dispatch(setSuccessAlert("Post deleted successfully"))
+            }
+        } 
+        catch (error) {
+            
+        }
     }
 
     const handleRedirect = () => {
@@ -110,7 +118,7 @@ export default function PostTemplate({ postData, myProfile }) {
                     />
                 }
                 action={
-                    owner && <DeleteButton onClick={handleDelete}/>
+                    owner && <DeleteConfirmation deleteInstance={handleDelete}/>
                   }
                 title={
                     <Link

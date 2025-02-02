@@ -49,13 +49,13 @@ const uploadImage = asyncHandler(async (req, res) => {
             title,
             type: "image",
             description,
-            tags,
+            tags:  tags.split(','),
             mediafiles,
             owner: req.user._id
     })
 
     return res.status(201).json(
-        new ApiResponse(201, { _id: newPost._id }, "Images uploaded successfully!")
+        new ApiResponse(201, { id: newPost._id }, "Images uploaded successfully!")
     )
 })
 
@@ -86,7 +86,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
         description,
         type: "video",
         mediafiles: [uploadedVideo.url],
-        tags,
+        tags:  tags.split(','),
         owner: req.user._id
     })
 
@@ -108,7 +108,7 @@ const uploadArticle = asyncHandler(async (req, res) => {
         title,
         type: "article",
         article,
-        tags,
+        tags: tags.split(','),
         owner: req.user._id
     })
 
@@ -134,15 +134,15 @@ const deletePost = asyncHandler(async (req, res) => {
         await Promise.all(mediafiles.map(async (file) => {
 
             const publicId = extractPublicId(file);
-            await deleteFromCloudinary(publicId);
+            await deleteFromCloudinary(publicId,post.type);
             return null;
         }))
     }
 
-    await Post.deleteOne({ _id: id, ow});
+    await Post.deleteOne({ _id: id,  owner: req.user._id});
 
     return res.status(200).json(
-        new ApiResponse(200,{},"Post deleted successfully")
+        new ApiResponse(200,{deleted:true},"Post deleted successfully")
     );
 
 })
@@ -354,6 +354,35 @@ const getSavedPosts = asyncHandler(async (req, res) => {
         new ApiResponse(200,savedPosts,"Saved posts fetched successfully")
     )
 })
+
+const getSearchPosts = asyncHandler(async (req, res) => {
+    
+    const { search } = req.query;
+    const { page = 1} = req.query;
+
+    if(!search){
+        throw new ApiError(400,"Search field cannot be empty")
+    }
+
+    const aggregate = Post.aggregate([
+        {
+            $match: { $text: { $search: search}}
+        },
+        ...postAggregationPipelines(req.user._id,req.user.savedPosts)
+    ])
+
+    const options = {
+        page: parseInt(page),
+        limit: 10
+    }
+
+    const posts = await Post.aggregatePaginate(aggregate,options);
+
+    return res.status(200).json(
+        new ApiResponse(200,posts,"Posts fetched succesfully")
+    )
+})
+
 const saveUnsavePost = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
@@ -398,5 +427,6 @@ export {
     getPostsByUsername,
     getLikedPosts,
     getSavedPosts,
+    getSearchPosts,
     saveUnsavePost
 }

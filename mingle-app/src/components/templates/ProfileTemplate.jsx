@@ -5,27 +5,15 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { formatCount } from "../../utils/formatter";
+import { followUnfollowUser } from '../../api/followings.api';
 
 export default function ProfileTemplate({ profileData, small }) {
 
     const navigate = useNavigate();
     const myProfile = useSelector((state)=>state.auth.userData)
-    
-    const handleFollow = () => {
-        //follow logic
-        console.log("Here");
-
-        alert("Sending follow");
-        setFollow(true);
-    }
-
-    const handleUnFollow = () => {
-        //unfollow logic
-        alert("Unfollowing");
-        setFollow(false);
-    }
 
     const {
+        _id,
         fullname,
         username,
         email,
@@ -41,6 +29,26 @@ export default function ProfileTemplate({ profileData, small }) {
 
     const owner = myProfile.username === username;
     const [follow, setFollow] = useState(followedByMe);
+    const [follows, setFollows] = useState(followersCount);
+
+    const handleFollow = async () => {
+        try {
+            const response = await followUnfollowUser(_id);
+            if(response.statuscode === 200){
+                const following = response.data.followedByMe
+                setFollow(following);
+                if(following){
+                    setFollows((f)=>f+1)
+                }
+                else{
+                    setFollows((f)=>f-1)
+                }
+            }
+        } 
+        catch (error) {
+            
+        }
+    }
 
     return (
         <>
@@ -94,7 +102,7 @@ export default function ProfileTemplate({ profileData, small }) {
                             <Divider />
                             <Stack sx={{ mt: 2, mb: 3 }} direction="row" spacing={10}>
                                 <Typography variant="body1">
-                                    {formatCount(followersCount) + " "}
+                                    {formatCount(follows) + " "}
                                     <Typography variant="caption">
                                         Followers
                                     </Typography>
@@ -113,9 +121,7 @@ export default function ProfileTemplate({ profileData, small }) {
                                     :
                                     <Button
                                         variant={follow ? "outlined" : "contained"}
-                                        onClick={() =>
-                                            follow ? handleUnFollow() : handleFollow()
-                                        }
+                                        onClick={handleFollow}
                                     >
                                         {follow ? "Unfollow" : "Follow"}
                                     </Button>

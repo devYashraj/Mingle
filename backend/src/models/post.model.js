@@ -53,6 +53,8 @@ const postSchema = new mongoose.Schema(
     }
 )
 
+postSchema.index({title: 'text'})
+
 postSchema.plugin(aggregatePaginate);
 
 export const Post = mongoose.model("Post",postSchema);

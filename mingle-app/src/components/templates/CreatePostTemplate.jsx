@@ -8,7 +8,10 @@ import RichTextEditor from '../../utils/RichTextEditor';
 import { getFileExtension, urlGenerator} from '../../utils/commonFunctions'
 import ImageTemplate from './ImageTemplate'
 import VideoTemplate from './VideoTemplate'
-
+import { uploadImage, uploadVideo, uploadArticle } from '../../api/posts.api';
+import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { setSuccessAlert } from '../../features/alert/alertSlice'
 
 export default function CreatePostTemplate() {
     
@@ -24,6 +27,7 @@ export default function CreatePostTemplate() {
     const [titleError, setTitleError] = useState(false);
     const [error, setError] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
+    const [loading, setLoading] = useState(false);
     
     const handleChange = (evt) =>{
         const name = evt.target.name;
@@ -53,7 +57,10 @@ export default function CreatePostTemplate() {
         }
     }
 
-    const handleSubmit = (event) =>{
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleSubmit = async (event) =>{
         event.preventDefault();
         
         if(data.title.trim().length === 0)
@@ -133,12 +140,41 @@ export default function CreatePostTemplate() {
         const formData = new FormData();
         formData.append('title',data.title);
         formData.append('tags',data.tags);
-        formData.append('postType',postType);
-        formData.append('file',mediaFiles);
-        formData.append('content',content);
+        formData.append('article',content);
         formData.append('description',data.description);
-        //send formData to backend
+        
+        if (postType !== 'article') {
+            for (const file of mediaFiles) {
+                formData.append('media', file);
+            }
+        }
 
+        try {
+            setLoading(true);
+            let response;
+            if(postType === 'image'){
+                formData.delete('article');
+                response = await uploadImage(formData)
+            }
+            else if(postType === 'article'){
+                formData.delete("media")
+                formData.delete("description")
+                response = await uploadArticle(formData);
+            }
+            else if(postType === 'video'){
+                formData.delete('article');
+                response = await uploadVideo(formData);
+            }
+
+            if(response.statuscode === 201){
+                setLoading(false);
+                dispatch(setSuccessAlert("Uploaded successfully"));
+                navigate(`/post/${response.data.id}`);
+            }
+            
+        } catch (error) {
+            
+        }
     }
 
     return (
@@ -274,7 +310,7 @@ export default function CreatePostTemplate() {
                     />
                 }
                 <Box textAlign='center' sx={{m:2}}>
-                    <Button type='submit' variant='contained' color='primary' sx={{borderRadius:"30px"}}>
+                    <Button disabled={loading} type='submit' variant='contained' color='primary' sx={{borderRadius:"30px"}}>
                         Share
                     </Button>
                 </Box>
