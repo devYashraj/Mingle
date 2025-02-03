@@ -79,6 +79,11 @@ const getPostsByTag = asyncHandler(async (tag, page) => {
     return response.data;
 })
 
+const getTrendingData = asyncHandler(async () => {
+    const response = await apiClient.get('/posts/trending');
+    return response.data;
+})
+
 export {
     getFeed,
     savePost,
@@ -91,5 +96,6 @@ export {
     uploadVideo,
     uploadArticle,
     getSearchPosts,
+    getTrendingData,
     getPostsByTag
 }

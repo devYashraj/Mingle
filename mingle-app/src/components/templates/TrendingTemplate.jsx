@@ -5,8 +5,7 @@ import { formatCount } from '../../utils/formatter.js'
 import NoData from '../../utils/NoData.jsx';
 import { useState, useEffect } from 'react';
 import Loading from '../../utils/Loading.jsx';
-
-import { sampleTrendingPosts } from '../../utils/sampleData.js';
+import { getTrendingData } from '../../api/posts.api.js';
 
 export default function TrendingTemplate() {
 
@@ -15,11 +14,15 @@ export default function TrendingTemplate() {
     const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
-        const getTrending = () =>{
+        const getTrending = async () =>{
             try {
-                const trending = sampleTrendingPosts;
-                setPosts(trending.posts);
-                setTags(trending.tags);
+                setLoading(true);
+                const response = await getTrendingData();
+                if(response.statuscode === 200){
+                    const {trendingPosts, trendingTags} = response.data;
+                    setPosts(trendingPosts)
+                    setTags(trendingTags)
+                }
             } catch (error) {
                 
             } finally{
@@ -49,7 +52,7 @@ export default function TrendingTemplate() {
                             posts.length ?
                                 posts.map((post, i) => (
                                     <ListItem key={i}
-                                        onClick={() => navigate(`/post/${post.id}`)}
+                                        onClick={() => navigate(`/post/${post._id}`)}
                                         alignItems="flex-start"
                                         sx={{
                                             m: 0, mb: 1, p: 0, pl: 1,
@@ -60,7 +63,7 @@ export default function TrendingTemplate() {
                                         }}
                                     >
                                         <ListItemAvatar>
-                                            <Avatar alt={post.fullName} src={post.avatar} />
+                                            <Avatar alt={post.fullname} src={post.avatar} />
                                         </ListItemAvatar>
                                         <ListItemText
                                             width="100%"
@@ -73,13 +76,13 @@ export default function TrendingTemplate() {
                                                         variant="caption"
                                                         sx={{ color: 'text.primary' }}
                                                     >
-                                                        {post.fullName}
+                                                        {post.fullname}
                                                     </Typography>
                                                     <Typography
                                                         variant="caption"
                                                         sx={{ color: 'text.primary', display: 'block' }}
                                                     >
-                                                        {`${formatCount(post.likes)} Likes ${formatCount(post.comments)} Comments`}
+                                                        {`${formatCount(post.likesCount)} Likes ${formatCount(post.commentsCount)} Comments`}
                                                     </Typography>
                                                 </>
                                             }
@@ -101,7 +104,7 @@ export default function TrendingTemplate() {
                                     <ListItem key={i} sx={{ m: 0, mb: 1, p: 0, pl: 2 }}>
                                         <ListItemText
                                             primary={
-                                                <Link className='tags' to={`../tag/${tag}`}>{"#" + tag}</Link>
+                                                <Link className='tags' to={`../tag/${tag.tag}`}>{"#" + tag.tag}</Link>
                                             }
                                         />
                                     </ListItem>

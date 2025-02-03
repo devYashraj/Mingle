@@ -11,6 +11,7 @@ import {
     getSavedPosts,
     getSearchPosts,
     getPostsByTag,
+    getTrendingData,
     saveUnsavePost
 } from '../controllers/post.controller.js';
 import { verifyJwt } from '../middlewares/auth.middleware.js';
@@ -29,6 +30,7 @@ router.route('/feed').get(getFeedPosts);
 router.route('/liked').get(getLikedPosts);
 router.route('/saved').get(getSavedPosts);
 router.route('/search').get(getSearchPosts);
+router.route('/trending').get(getTrendingData);
 router.route('/tag/:tag').get(getPostsByTag);
 
 router.route('/:id').get(getPostById);

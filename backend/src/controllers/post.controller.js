@@ -413,6 +413,81 @@ const getPostsByTag = asyncHandler(async (req, res) => {
     )
 })
 
+const getTrendingData = asyncHandler(async( req, res) => {
+
+    const trendingPosts = await Post.aggregate([
+        {
+            $lookup:{
+                from: "likes",
+                localField: "_id",
+                foreignField: "post",
+                as: "likes"
+            }
+        },
+        {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "post",
+                as: "comments"
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        {
+            $project: {
+                title: 1,
+                avatar: { $arrayElemAt: ["$owner.avatar", 0]},
+                fullname: { $arrayElemAt: ["$owner.fullname", 0]},
+                likesCount: { $size: "$likes" },
+                commentsCount: { $size: "$comments" },
+                totalInteractions: { $add: [{ $size: "$likes" }, { $size: "$comments" }] }
+            }
+        },
+        {
+            $sort: { totalInteractions: -1 }
+        },
+        {
+            $limit: 3
+        }
+    ]);
+
+    const trendingTags = await Post.aggregate([
+        {
+            $unwind: "$tags"
+        },
+        {
+            $group: {
+                _id: "$tags",
+                count: { $sum : 1}
+            }
+        },
+        {
+            $sort: { count : -1 }
+        },
+        {
+            $limit: 3
+        },
+        {
+            $project: {
+                _id: 0,
+                tag: "$_id",
+                count: 1
+            }
+        }
+    ])
+
+    return res.status(200).json(
+        new ApiResponse(200,{ trendingPosts, trendingTags}, "Trending data fetched successfully")
+    )
+})
+
 const saveUnsavePost = asyncHandler(async (req, res) => {
 
     const { id } = req.params;
@@ -459,5 +534,6 @@ export {
     getSavedPosts,
     getSearchPosts,
     getPostsByTag,
-    saveUnsavePost
+    saveUnsavePost,
+    getTrendingData
 }
