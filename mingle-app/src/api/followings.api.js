@@ -7,12 +7,12 @@ const followUnfollowUser = asyncHandler(async (userId) => {
 })
 
 const getFollowers = asyncHandler(async (username) => {
-    const response = await apiClient.post(`/followings/followers/${username}`);
+    const response = await apiClient.get(`/followings/followers/${username}`);
     return response.data;
 })
 
 const getFollowings = asyncHandler(async (username) => {
-    const response = await apiClient.post(`/followings/following/${username}`);
+    const response = await apiClient.get(`/followings/following/${username}`);
     return response.data;
 })
 

@@ -8,6 +8,7 @@ import { useParams } from 'react-router';
 
 import ReplyList from '../lists/ReplyList';
 import PostList from '../lists/PostList';
+import UserList from '../lists/UserList';
 import EditProfileTemplate from '../templates/EditProfileTemplate';
 import ChangePassword from '../templates/ChangePassword';
 import { useSelector } from 'react-redux';
@@ -20,6 +21,10 @@ import {
     getCommentsByUsername,
     getLikedComments
 } from '../../api/comments.api';
+import {
+    getFollowers,
+    getFollowings
+} from '../../api/followings.api'
 
 function useRouteMatch(patterns) {
     const { pathname } = useLocation();
@@ -51,10 +56,6 @@ export default function UserActivityLayout({ self = true, username }) {
             value: "/myprofile/comments",
         },
         {
-            label: "Edit Profile",
-            value: "/myprofile/edit-profile",
-        },
-        {
             label: "Liked Posts",
             value: "/myprofile/liked-posts",
         },
@@ -63,8 +64,20 @@ export default function UserActivityLayout({ self = true, username }) {
             value: "/myprofile/liked-comments",
         },
         {
+            label: "Followers",
+            value: "/myprofile/followers"
+        },
+        {
+            label: "Following",
+            value: "/myprofile/following"
+        },
+        {
             label: "Saved Posts",
             value: "/myprofile/saved-posts",
+        },
+        {
+            label: "Edit Profile",
+            value: "/myprofile/edit-profile",
         },
         {
             label: "Change Password",
@@ -75,10 +88,12 @@ export default function UserActivityLayout({ self = true, username }) {
     const tabPanelsPrivate = {
         "posts": <PostList func={(page)=>getPostsByUsername(myprofile.username,page)} refreshId={refreshId}/>,
         "comments": <ReplyList func={(page)=>getCommentsByUsername(myprofile.username,page)} refreshId={refreshId}/>,
-        "edit-profile": <EditProfileTemplate />,
         "liked-posts": <PostList func={(page)=>getLikedPosts(page)} refreshId={refreshId}/>,
         "liked-comments": <ReplyList func={(page)=>getLikedComments(page)} refreshId={refreshId}/>,
+        "followers": <UserList func={(page)=>getFollowers(myprofile.username,page)} refreshId={refreshId}/>,
+        "following": <UserList func={(page)=>getFollowings(myprofile.username,page)} refreshId={refreshId}/>,
         "saved-posts": <PostList func={(page)=>getSavedPosts(page)} refreshId={refreshId}/>,
+        "edit-profile": <EditProfileTemplate />,
         "change-password": <ChangePassword/>,
     }
 
@@ -90,12 +105,22 @@ export default function UserActivityLayout({ self = true, username }) {
         {
             label: "Comments",
             value: `/profile/${username}/comments`,
-        }
+        },
+        {
+            label: "Followers",
+            value: `/profile/${username}/followers`
+        },
+        {
+            label: "Following",
+            value: `/profile/${username}/following`
+        },
     ];
 
     const tabPanelsPublic = {
         "posts": <PostList func={(page)=>getPostsByUsername(username,page)} refreshId={refreshId}/>,
         "comments": <ReplyList func={(page)=>getCommentsByUsername(username,page)} refreshId={refreshId}/>,
+        "followers": <UserList func={(page)=>getFollowers(username,page)} refreshId={refreshId}/>,
+        "following": <UserList func={(page)=>getFollowings(username,page)} refreshId={refreshId}/>,
     }
 
     const routeMatch = useRouteMatch(
@@ -103,15 +128,19 @@ export default function UserActivityLayout({ self = true, username }) {
             [
                 '/myprofile/posts',
                 '/myprofile/comments',
-                '/myprofile/edit-profile',
                 '/myprofile/liked-posts',
                 '/myprofile/liked-comments',
+                '/myprofile/followers',
+                '/myprofile/following',
                 '/myprofile/saved-posts',
+                '/myprofile/edit-profile',
                 '/myprofile/change-password'
             ] :
             [
                 `/profile/${username}/posts`,
-                `/profile/${username}/comments`
+                `/profile/${username}/comments`,
+                `/profile/${username}/followers`,
+                `/profile/${username}/following`
             ]
     );
 

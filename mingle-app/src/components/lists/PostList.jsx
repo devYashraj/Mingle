@@ -45,7 +45,7 @@ export default function PostList({ func, refreshId }) {
         return <Loading color="secondary" size="4rem" />
 
     if(posts.length === 0){
-        return <NoData textAlign={"center"}/>
+        return <NoData textAlign="center" variant="h6" p={2}/>
     }
 
     return (

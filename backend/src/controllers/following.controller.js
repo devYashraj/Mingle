@@ -34,7 +34,6 @@ const getFollowers = asyncHandler(async (req, res) => {
 
     const { username } = req.params;
     const { page = 1 } = req.query;
-    const limit = 5;
 
     const user = await User.findOne({username: username});
 
@@ -51,7 +50,24 @@ const getFollowers = asyncHandler(async (req, res) => {
                 from: "users",
                 localField: "follower",
                 foreignField: "_id",
-                as: "followerData"
+                as: "followerData",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "followings",
+                            localField: "_id",
+                            foreignField: "leader",
+                            as: "followers"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            followedByMe: {
+                                $in: [req.user._id, "$followers.follower"]
+                            }
+                        }
+                    }
+                ]
             }
         },
         {
@@ -60,6 +76,8 @@ const getFollowers = asyncHandler(async (req, res) => {
                 fullname: { $arrayElemAt: ["$followerData.fullname", 0] },
                 username: { $arrayElemAt: ["$followerData.username", 0] },
                 headline: { $arrayElemAt: ["$followerData.headline", 0] },
+                userId: { $arrayElemAt: ["$followerData._id", 0]},
+                followedByMe: { $arrayElemAt: ["$followerData.followedByMe", 0] }
             }
         },
         {
@@ -67,14 +85,16 @@ const getFollowers = asyncHandler(async (req, res) => {
                 fullname: 1,
                 avatar: 1,
                 username: 1,
-                headline: 1
+                headline: 1,
+                followedByMe: 1,
+                userId: 1,
             }
         }
     ])
 
     const options = {
         page: parseInt(page,10),
-        limit
+        limit: 10
     }
 
     const followers = await Following.aggregatePaginate(aggregate,options);
@@ -87,7 +107,6 @@ const getFollowing = asyncHandler(async (req, res) => {
 
     const { username } = req.params;
     const { page = 1 } = req.query;
-    const limit = 5;
 
     const user = await User.findOne({username: username});
 
@@ -104,7 +123,24 @@ const getFollowing = asyncHandler(async (req, res) => {
                 from: "users",
                 localField: "leader",
                 foreignField: "_id",
-                as: "followings"
+                as: "followings",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "followings",
+                            localField: "_id",
+                            foreignField: "leader",
+                            as: "followers"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            followedByMe: {
+                                $in: [req.user._id, "$followers.follower"]
+                            }
+                        }
+                    }
+                ]
             }
         },
         {
@@ -113,6 +149,8 @@ const getFollowing = asyncHandler(async (req, res) => {
                 fullname: {$arrayElemAt: ["$followings.fullname", 0]},
                 username: {$arrayElemAt: ["$followings.username", 0]},
                 headline: {$arrayElemAt: ["$followings.headline", 0]},
+                userId: { $arrayElemAt: ["$followings._id", 0]},
+                followedByMe: { $arrayElemAt: ["$followings.followedByMe", 0]}
             }
         },
         {
@@ -120,14 +158,16 @@ const getFollowing = asyncHandler(async (req, res) => {
                 avatar: 1,
                 fullname: 1,
                 username: 1,
-                headline: 1
+                headline: 1,
+                followedByMe: 1,
+                userId: 1
             }
         }
     ])
 
     const options = {
         page: parseInt(page),
-        limit
+        limit: 10
     }
 
     const following = await Following.aggregatePaginate(aggregate,options);

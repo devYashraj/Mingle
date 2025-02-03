@@ -43,6 +43,10 @@ export default function CommentList({postId, refresh}) {
     if(loading)
         return <Loading color='secondary' size='2rem'/>
 
+    if(comments.length === 0){
+        return <NoData textAlign="center" variant="h6" p={2}/>
+    }
+
     return (
         <>
             {

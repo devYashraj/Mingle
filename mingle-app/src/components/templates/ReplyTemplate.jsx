@@ -40,7 +40,7 @@ export default function ReplyTemplate({ reply, myProfile }) {
             navigate(`/profile/${username}/posts`);
     }
 
-    const owner = reply.owner === myProfile._id;
+    const owner = reply.username === myProfile.username;
     
     return (
         <>

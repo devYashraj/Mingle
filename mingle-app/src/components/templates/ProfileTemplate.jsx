@@ -101,18 +101,34 @@ export default function ProfileTemplate({ profileData, small }) {
                             </Typography>
                             <Divider />
                             <Stack sx={{ mt: 2, mb: 3 }} direction="row" spacing={10}>
-                                <Typography variant="body1">
-                                    {formatCount(follows) + " "}
-                                    <Typography variant="caption">
-                                        Followers
+                                <Button 
+                                    variant="text"
+                                    color="secondary"
+                                    onClick={()=>{
+                                        owner ? navigate('../myprofile/followers') : navigate(`../profile/${username}/followers`)
+                                    }}
+                                >
+                                    <Typography variant="body1">
+                                        {formatCount(follows) + " "}
+                                        <Typography variant="caption">
+                                            Followers
+                                        </Typography>
                                     </Typography>
-                                </Typography>
-                                <Typography variant="body1">
-                                    {formatCount(followingCount) + " "}
-                                    <Typography variant="caption">
-                                        Following
+                                </Button>
+                                <Button
+                                    variant="text"
+                                    color="secondary"
+                                    onClick={()=>{
+                                        owner ? navigate('../myprofile/following') : navigate(`../profile/${username}/following`)
+                                    }}
+                                >
+                                    <Typography variant="body1">
+                                        {formatCount(followingCount) + " "}
+                                        <Typography variant="caption">
+                                            Following
+                                        </Typography>
                                     </Typography>
-                                </Typography>
+                                </Button>
                             </Stack>
 
                             {
