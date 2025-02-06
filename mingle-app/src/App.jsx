@@ -14,6 +14,7 @@ import Feed from './pages/Feed.jsx';
 import Search from './pages/Search.jsx';
 import Tags from './pages/Tags.jsx';
 import Post from './pages/Post.jsx';
+import Chats from './pages/Chats.jsx';
 import AuthLayout from './components/layouts/AuthLayout.jsx';
 import Profile from './pages/Profile.jsx';
 import MyProfile from './pages/MyProfile.jsx';
@@ -83,6 +84,12 @@ export default function App() {
                                 </Route>
 
                             </Route>
+
+                            
+                            <Route element={<AuthLayout auth={true} />}>
+                                <Route path='chats/:id?' element={<Chats />} /> 
+                            </Route>
+                           
 
                             <Route path='*' element={<ErrorPage/>}/>
 

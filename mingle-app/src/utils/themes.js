@@ -13,6 +13,7 @@ export const themes = {
             background: {
                 default: '#f5f5f5',
                 paper: '#ffffff',
+                message: "#00afb9"
             },
             text: {
                 primary: '#000000',
@@ -34,6 +35,7 @@ export const themes = {
             background: {
                 default: '#fafafa',
                 paper: '#ffffff',
+                message: "#dda15e"
             },
             text: {
                 primary: '#333333',
@@ -55,6 +57,7 @@ export const themes = {
             background: {
                 default: '#121212',
                 paper: '#1e1e1e',
+                message: "#284b63"
             },
             text: {
                 primary: '#ffffff',
@@ -76,6 +79,7 @@ export const themes = {
             background: {
                 default: '#212121',
                 paper: '#303030',
+                message: "#606c38"
             },
             text: {
                 primary: '#ffffff',

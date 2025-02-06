@@ -196,7 +196,7 @@ function Navbar() {
                         <Box sx={{ flexGrow: 0 }}>
                             <Tooltip title="Open Chats">
                                 <IconButton
-                                    onClick={() => alert("Feature under development")}
+                                    onClick={() => navigate('/chats')}
                                     sx={{ p: 0, mr: 2, color: 'inherit' }}>
                                     <Badge badgeContent={7} color='secondary'>
                                         <ChatIcon fontSize='medium' />

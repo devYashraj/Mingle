@@ -43,3 +43,19 @@ export function formatCount(cnt) {
 
   return formatter.format(cnt / 1_000_000_000).replace(/\.00$/, '') + 'B'; // Handle billions
 }
+
+
+export function getFullDate(dateStr) {
+  const date = new Date(dateStr);
+
+  const hours = date.getHours() % 12 || 12; 
+  const amPm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const year = String(date.getFullYear()).slice(-2);
+
+  return `${hours}:${minutes} ${amPm} ${day}/${month}/${year}`;
+}

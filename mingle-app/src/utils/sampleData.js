@@ -197,3 +197,62 @@ export const sampleComments = [
         replies:3
     }
 ]
+
+export const sampleChatList = [
+    {
+        _id: "jhalskdjashdalskdjh",
+        name: "Wal Kardin",
+        isGroupChat: false,
+        lastMessage: "Just finished my project last night. Going to relax today!",
+        participants: [
+            "asdasdaskjdlaskdajlsdkasda",
+            "679608f420caca28e9cd1366",
+        ],
+        createdAt: new Date(2024, 10, 29, 16, 47, 22),
+        updatedAt: new Date(2024, 10, 29, 16, 47, 22)
+    },
+    {
+        _id: "jhalskdjalskdjh",
+        name: "Society Members",
+        isGroupChat: true,
+        lastMessage: "Hello what's going on",
+        participants: [
+            "asdasdaskjdlaskdajlsdkasda",
+            "asdasdaskjdlaskdajlsda",
+            "asdasdaskjdlaskdaa",
+            "679608f420caca28e9cd1366",
+        ],
+        admin: "679608f420caca28e9cd1366",
+        createdAt: new Date(2024, 10, 29, 16, 47, 22),
+        updatedAt: new Date(2024, 10, 29, 16, 47, 22)
+    },
+]
+
+export const sampelMessages = [
+    {
+        _id: "1",
+        chat: "jhalskdjalskdjh",
+        sender: "679608f420caca28e9cd1366",
+        sendername: "John Corrasco",
+        username: "myusername",
+        content: "Hello there this is a sample message please don't consider it real",
+        createdAt: new Date(2024, 10, 29, 16, 47, 22),
+    },
+    {
+        _id: "2",
+        chat: "jhalskdjalskdjh",
+        sender: "asdasdaskjdlaskdajlsdkasda",
+        sendername: "Random Name",
+        username: "redkoala123",
+        content: "what are you saying man? This is a sample message ? Are you crazy?",
+        createdAt: new Date(2024, 10, 29, 16, 47, 22),
+    },  
+    {
+        _id: "3",
+        chat: "myusername",
+        sender: "679608f420caca28e9cd1366",
+        sendername: "John Corrasco",
+        content: "Hello there this is a sample message please don't consider it real",
+        createdAt: new Date(2024, 10, 29, 16, 47, 22),
+    },
+]

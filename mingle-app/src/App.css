@@ -226,3 +226,26 @@
     transform: translateY(0);
   }
 }
+
+.message {
+  word-wrap: break-word;
+  background-color: #ff1493;
+  max-width: 70%;
+  margin: 1rem;
+  padding: 0.5rem;
+}
+
+.sentMessage {
+  background-color: aqua;
+  border-radius: 10px 10px 0 10px;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.receivedMessage { 
+  background-color: #ff69b4;
+  border-radius: 10px 10px 10px 0;
+  margin-left: 0;
+  margin-right: auto;
+}
+
