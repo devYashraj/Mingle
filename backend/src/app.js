@@ -1,8 +1,22 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { Server } from 'socket.io';
+import { createServer } from 'node:http';
+import { initializeSocketIO } from './socket/index.js';
 
 const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer,{
+    pingTimeout: 60000,
+    cors: {
+        origin: process.env.CORS_ORIGIN,
+        credentials: true,
+    }
+});
+
+app.set("io",io);
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
@@ -26,4 +40,6 @@ app.use('/api/v1/posts',postRouter)
 app.use('/api/v1/like',likeRouter);
 app.use('/api/v1/comments',commentRouter)
 
-export default app;
+initializeSocketIO(io);
+
+export default httpServer;
