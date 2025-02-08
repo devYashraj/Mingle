@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema(
             unique: true,
             lowercase: true,
             trim: true,
-            index: true
         },
         email: {
             type: String,
@@ -98,7 +97,8 @@ userSchema.methods.getRefreshToken = function(){
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
-}
+};
+
 
 userSchema.plugin(aggregatePaginate);
 

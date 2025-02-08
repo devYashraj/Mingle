@@ -314,6 +314,33 @@ const getMyProfileData = asyncHandler(async (req, res) => {
 
 })
 
+const getUserList = asyncHandler(async (req, res) => {
+
+    const { searchQuery } = req.params;
+
+    if(!searchQuery){
+        throw new ApiError(400,"Search query is required")
+    }
+
+    const userlist = await User.find(
+        {
+            $or: [
+                {
+                    fullname: { $regex: new RegExp(searchQuery,"i") }
+                },
+                {
+                    username: { $regex: new RegExp(searchQuery, "i")}
+                }
+            ]
+        },
+        { fullname: 1, username: 1}
+    )
+
+    return res.status(200).json(
+        new ApiResponse(200, userlist, "Users fetched successfully")
+    )
+})
+
 export {
     registerUser,
     loginUser,
@@ -322,4 +349,5 @@ export {
     getMyProfileData,
     updateProfile,
     changePassword,
+    getUserList
 }

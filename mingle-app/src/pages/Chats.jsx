@@ -12,9 +12,10 @@ import { Stack, Tooltip } from '@mui/material';
 import MessageList from '../components/lists/MessageList.jsx';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import AddCommentIcon from '@mui/icons-material/AddComment';
 import ChatMenu from '../utils/ChatMenu.jsx';
 import { useEffect, useState } from 'react';
+import NewChatForm from '../components/inputs/NewChatForm.jsx';
+// import socket from '../socket/index.js';
 
 const drawerWidth = 350;
 
@@ -75,17 +76,14 @@ export default function Chats() {
             <Toolbar />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant='h6' pl={4}>Chats</Typography>
-                <Stack direction='row' spacing={2}>
-                    <Tooltip title='New Chat'>
-                        <IconButton>
-                            <AddCommentIcon fontSize='medium' />
-                        </IconButton>
-                    </Tooltip>
+                <Stack direction='row' spacing={1}>
+                    <NewChatForm/>
                     <ChatMenu/>
                 </Stack>
             </Box>
             <Divider />
             <ChatList 
+                myUsername={myProfile.username}
                 unreadMessages={unreadMessages}
                 setUnreadMessages={setUnreadMessages}
             />

@@ -3,6 +3,7 @@ import {
     loginUser,
     registerUser,
     logoutUser,
+    getUserList,
     getUserProfileData,
     getMyProfileData,
     updateProfile,
@@ -17,6 +18,7 @@ router.route('/register').post(registerUser);
 router.route('/login').post(loginUser);
 
 //protected routes
+router.route('/userlist/:searchQuery').get(verifyJwt,getUserList)
 router.route('/myprofile').get(verifyJwt,getMyProfileData);
 router.route('/profile/:username').get(verifyJwt, getUserProfileData);
 router.route('/change-password').patch(verifyJwt,changePassword)

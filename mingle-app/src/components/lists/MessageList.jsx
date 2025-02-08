@@ -8,6 +8,8 @@ import Loading from "../../utils/Loading";
 import { useState, useEffect } from "react";
 import { getFullDate } from '../../utils/formatter.js';
 import { stringAvatar } from "../../utils/commonFunctions.js"
+import { getChatDetails } from "../../api/chats.api.js"
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export default function MessageList({ myId, chatId, drawerWidth, handleDrawerToggle }) {
 
@@ -21,24 +23,17 @@ export default function MessageList({ myId, chatId, drawerWidth, handleDrawerTog
 
     }
 
-    const getCurrentChatDetails = (id) => {
-        setCurrentChat({
-            _id: "jhalskdjashdalskdjh",
-            name: "Wal Kardin",
-            isGroupChat: true,
-            lastMessage: "Just finished my project last night. Going to relax today!",
-            participants: [
-                "asdasdaskjdlaskdajlsdkasda",
-                "679608f420caca28e9cd1366",
-            ],
-            createdAt: new Date(2024, 10, 29, 16, 47, 22),
-            updatedAt: new Date(2024, 10, 29, 16, 47, 22)
-        })
+    const getCurrentChatDetails = async (id) => {
+        
+        const response = await getChatDetails(id);
+        setCurrentChat(response.data[0]);
     }
 
     useEffect(() => {
+        setLoading(true);
         getMessages(chatId);
         getCurrentChatDetails(chatId);
+        setLoading(false)
     }, [chatId])
 
     if (loading)
@@ -74,6 +69,9 @@ export default function MessageList({ myId, chatId, drawerWidth, handleDrawerTog
                                     {`Last active ${getFullDate(currentChat.updatedAt)}`}
                                 </Typography>
                             </Typography>
+                            <IconButton color=''>
+                                <InfoIcon/>
+                            </IconButton>
                         </Stack>
                     </Typography>
 

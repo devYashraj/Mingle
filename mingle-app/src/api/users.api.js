@@ -50,6 +50,13 @@ const changePassword = asyncHandler(async (data) => {
     return response.data;
 })
 
+const getUserList = asyncHandler( async (searchQuery) => {
+
+    const response =  await apiClient.get(`/users/userlist/${searchQuery}`);
+
+    return response.data;
+})
+
 export {
     login,
     register,
@@ -57,5 +64,6 @@ export {
     getMyProfileData,
     getUserProfileData,
     updateMyProfile,
+    getUserList,
     changePassword
 }
