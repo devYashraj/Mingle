@@ -11,7 +11,7 @@ apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("mingleAccessToken");
         if(token){
-            config.headers.Authorization - `Bearer ${token}`
+            config.headers.Authorization = `Bearer ${token}`
         }
         return config;
     },
@@ -25,6 +25,11 @@ apiClient.interceptors.response.use(
         return response;
     },
     (error) => {
+        if(error.response && error.response.status === 401){
+            localStorage.removeItem("mingleUserState")
+            localStorage.removeItem("mingleAccessToken")
+            localStorage.removeItem("mingleRefreshToken")
+        }
         return Promise.reject(error)
     }
 )

@@ -4,10 +4,13 @@ import ApiError from '../utils/ApiError.js';
 import { User } from '../models/user.model.js';
 import { CHAT_EVENTS } from '../constants.js';
 
-const mountJoinChat = (socket) => {
+const mountJoinChat = (socket, username) => {
     socket.on(CHAT_EVENTS.JOIN_CHAT, (chatId) => {
-        socket.join(chatId);
-        console.log(`User has joined chat ${chatId}`);
+        const rooms = Array.from(socket.rooms);
+        if(!rooms.includes(chatId)){
+            socket.join(chatId);
+            console.log(`${username} has joined chat ${chatId}`);
+        }
     })
 }
 
@@ -53,7 +56,7 @@ const initializeSocketIO = (io) => {
             socket.emit(CHAT_EVENTS.CONNECTED);
             console.log(`${user.username} has connected`);
             
-            mountJoinChat(socket);
+            mountJoinChat(socket,user.username);
             mountStartTyping(socket);
             mountStopTyping(socket);
 

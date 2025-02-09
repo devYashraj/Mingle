@@ -8,6 +8,7 @@ import { logout as userLogout } from '../api/users.api';
 import { useDispatch } from 'react-redux';
 import { Tooltip } from '@mui/material';
 import Settings from './Settings';
+import { logout as authLogout } from '../features/auth/authSlice.js';
 
 export default function ChatMenu() {
     const navigate = useNavigate();

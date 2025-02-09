@@ -198,15 +198,10 @@ function Navbar() {
                                 <IconButton
                                     onClick={() => navigate('/chats')}
                                     sx={{ p: 0, mr: 2, color: 'inherit' }}>
-                                    <Badge badgeContent={7} color='secondary'>
+                                    <Badge 
+                                        badgeContent={Number(localStorage.getItem("mingleUnreadMessages"))} 
+                                        color='secondary'>
                                         <ChatIcon fontSize='medium' />
-                                    </Badge>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="See Notifications">
-                                <IconButton sx={{ p: 0, mr: 2, color: 'inherit' }}>
-                                    <Badge badgeContent={7} color='secondary'>
-                                        <NotificationsIcon fontSize='medium' />
                                     </Badge>
                                 </IconButton>
                             </Tooltip>

@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material"
-import { sampelMessages } from "../../utils/sampleData"
 import { AppBar, Toolbar } from "@mui/material"
 import CommentInput from "../inputs/CommentInput"
 import { IconButton, Stack, Avatar } from "@mui/material"
@@ -7,20 +6,24 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Loading from "../../utils/Loading";
 import { useState, useEffect } from "react";
 import { getFullDate } from '../../utils/formatter.js';
-import { stringAvatar, getChatName } from "../../utils/commonFunctions.js"
+import { stringAvatar, getChatName, CHAT_EVENTS } from "../../utils/commonFunctions.js"
 import { getChatDetails } from "../../api/chats.api.js"
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Typing from "../../utils/Typing.jsx"
+import { useSocket } from "../../context/SocketContext.jsx"
+import { sendMessage, getAllMessages } from "../../api/messages.api.js"
 
-export default function MessageList({myUsername, myId, chatId, drawerWidth, handleDrawerToggle }) {
+export default function MessageList({myProfile, chatId, unreadMessages, setUnreadMessages, drawerWidth, handleDrawerToggle }) {
 
     const [loading, setLoading] = useState(true);
     const [messages, setMessages] = useState([]);
     const [currentChat, setCurrentChat] = useState({});
+    const myId = myProfile._id;
+    const myUsername = myProfile.username;
 
-    const getMessages = (id) => {
-
-        setMessages(sampelMessages);
-
+    const getMessages = async (id) => {
+        const response = await getAllMessages(id);
+        setMessages(response.data);
     }
 
     const getCurrentChatDetails = async (id) => {
@@ -31,23 +34,88 @@ export default function MessageList({myUsername, myId, chatId, drawerWidth, hand
     const getInitData = async(id) => {
         try {
             await getCurrentChatDetails(id);
-            getMessages(id);
+            await getMessages(id);
         } 
         catch (error) {
-            
         }
         finally{
-            
-            
             setLoading(false);
         }
     }
+        
+    const socket = useSocket();
+    const [typing, setTyping] = useState(false);
+    const [newMsg, setNewMsg] = useState('');
 
     useEffect(() => {
-        setLoading(true);
+
         getInitData(chatId);
+        setUnreadMessages((prev)=>[...prev].filter((m)=>m.chat!==chatId))
+        localStorage.setItem("mingleUnreadMessages",unreadMessages.length)
+        socket.emit(CHAT_EVENTS.JOIN_CHAT,chatId);
+
     }, [chatId])
 
+
+    const onTyping = () => {
+        setTyping(true);
+    }
+
+    const onStopTyping = () => {
+        setTyping(false);
+    }
+
+    const handleTyping = (e) => {
+        setNewMsg(e.target.value)
+
+        socket.emit(CHAT_EVENTS.TYPING, chatId);
+
+        setTimeout(()=>{
+            socket.emit(CHAT_EVENTS.STOP_TYPING, chatId)
+            setTyping(false);
+        },3000)
+    }
+
+    const sendNewMessage = async() => {
+        try {
+            const response = await sendMessage(chatId,newMsg);
+            setMessages((prev)=>[...prev, response.data])
+            setNewMsg('');
+        } 
+        catch (error) {
+            console.log(error?.message);
+        }
+    }
+
+    const onMessageReceived = (msg) => {
+        if(msg.chat === chatId){
+            setMessages((prev)=>[...prev, msg])
+        }
+        else{
+            setUnreadMessages((prev)=>[...prev, msg])
+            localStorage.setItem("mingleUnreadMessages",unreadMessages.length)
+        }
+    }
+
+    useEffect(()=>{
+
+        socket.on(CHAT_EVENTS.TYPING,onTyping);
+
+        socket.on(CHAT_EVENTS.STOP_TYPING,onStopTyping);
+
+        socket.on(CHAT_EVENTS.MSG_RECEIVED,onMessageReceived);
+
+        return () => {
+            socket.off(CHAT_EVENTS.TYPING,onTyping);
+
+            socket.off(CHAT_EVENTS.STOP_TYPING,onStopTyping);
+        
+            socket.off(CHAT_EVENTS.MSG_RECEIVED,onMessageReceived);
+        }
+
+    },[socket,chatId])
+
+        
     if (loading)
         return <Loading color="secondary" size="4rem" />
 
@@ -103,7 +171,7 @@ export default function MessageList({myUsername, myId, chatId, drawerWidth, hand
                             {
                                 currentChat.isGroupChat &&
                                 <Typography variant="caption" component="p" color="secondary">
-                                    {myId === m.sender ? "You" : `${m.sendername} . ${m.username}`}
+                                    {myId === m.sender ? "You" : `${m.fullname} . ${m.username}`}
                                 </Typography>
                             }
                                 {m.content}
@@ -119,6 +187,7 @@ export default function MessageList({myUsername, myId, chatId, drawerWidth, hand
                     </Box>
                 ))
             }
+            {typing && <Typing/>}
             <Toolbar />
             <AppBar
                 position="fixed"
@@ -130,7 +199,14 @@ export default function MessageList({myUsername, myId, chatId, drawerWidth, hand
                     bgcolor: 'background.default'
                 }}
             >
-                <CommentInput placeholder="Type new message" />
+                <CommentInput 
+                    fullName={myProfile.fullName}
+                    avatar={myProfile.avatar}
+                    value={newMsg}
+                    onChange={handleTyping}
+                    handler={sendNewMessage}
+                    placeholder="Type new message" 
+                />
             </AppBar>
         </>
     )

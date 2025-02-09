@@ -107,7 +107,7 @@ export default function Chats() {
         return () => {
             socket.off(CHAT_EVENTS.NEW_CHAT,onNewChat);
         }
-    },[socket,chatList])
+    },[socket])
 
     if(loading)
         return <Loading color='secondary' size="2rem"/>
@@ -127,7 +127,6 @@ export default function Chats() {
                 chatList={chatList}
                 myUsername={myProfile.username}
                 unreadMessages={unreadMessages}
-                setUnreadMessages={setUnreadMessages}
             />
         </div>
     );
@@ -175,8 +174,9 @@ export default function Chats() {
                     (!id) ?
                         <SelectChat /> :
                         <MessageList
-                            myUsername={myProfile.username}
-                            myId={myProfile._id}
+                            unreadMessages={unreadMessages}
+                            setUnreadMessages={setUnreadMessages}
+                            myProfile={myProfile}
                             chatId={id}
                             drawerWidth={drawerWidth}
                             handleDrawerToggle={handleDrawerToggle}

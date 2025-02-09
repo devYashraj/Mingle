@@ -34,7 +34,7 @@ export default function ChatList({chatList, myUsername, unreadMessages}) {
                             alignItems="flex-start" 
                             secondaryAction={
                                 <Badge 
-                                    badgeContent={unreadMessages.length} 
+                                    badgeContent={unreadMessages.filter((m)=>m.chat===c._id).length} 
                                     color='secondary'
                                 />
                             }

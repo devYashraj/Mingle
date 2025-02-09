@@ -116,14 +116,6 @@ export default function LogIn() {
                             </Button>
                         </Grid>
                     </Grid>
-                    <Typography sx={{ textAlign: "center", mt: 2, mb: 2 }}> or </Typography>
-                    <Button
-                        fullWidth
-                        size='large'
-                        startIcon={<GoogleIcon />}
-                    >
-                        Login with Google
-                    </Button>
                 </Box>
             </Container>
             <Typography 
