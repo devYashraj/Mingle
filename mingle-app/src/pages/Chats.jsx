@@ -8,14 +8,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import ChatList from '../components/lists/ChatList';
-import { Stack, Tooltip } from '@mui/material';
+import { Stack } from '@mui/material';
 import MessageList from '../components/lists/MessageList.jsx';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import ChatMenu from '../utils/ChatMenu.jsx';
 import { useEffect, useState } from 'react';
 import NewChatForm from '../components/inputs/NewChatForm.jsx';
-// import socket from '../socket/index.js';
+import Loading from '../utils/Loading.jsx';
+import { getAllChats } from '../api/chats.api.js';
+import { CHAT_EVENTS } from '../utils/commonFunctions.js';
+import { useSocket } from '../context/SocketContext.jsx';
 
 const drawerWidth = 350;
 
@@ -70,6 +73,44 @@ export default function Chats() {
     )
 
     const [unreadMessages, setUnreadMessages] = useState([]);
+    const [chatList, setChatList] = useState([])
+    const [loading, setLoading] = useState(true)
+    const socket = useSocket();
+
+    const getChats = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllChats(); 
+            setChatList(response.data)
+        } 
+        catch (error) 
+        {
+
+        }
+        finally{ 
+            setLoading(false);
+        }
+    }
+
+    const onNewChat = (chat) => {
+        setChatList((prev)=>[chat,...prev])
+    }
+
+    useEffect(()=>{
+        getChats();
+    },[])
+
+    useEffect(()=>{
+
+        socket.on(CHAT_EVENTS.NEW_CHAT, onNewChat);
+
+        return () => {
+            socket.off(CHAT_EVENTS.NEW_CHAT,onNewChat);
+        }
+    },[socket,chatList])
+
+    if(loading)
+        return <Loading color='secondary' size="2rem"/>
 
     const drawer = (
         <div>
@@ -77,12 +118,13 @@ export default function Chats() {
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant='h6' pl={4}>Chats</Typography>
                 <Stack direction='row' spacing={1}>
-                    <NewChatForm/>
+                    <NewChatForm setChatList={setChatList}/>
                     <ChatMenu/>
                 </Stack>
             </Box>
             <Divider />
             <ChatList 
+                chatList={chatList}
                 myUsername={myProfile.username}
                 unreadMessages={unreadMessages}
                 setUnreadMessages={setUnreadMessages}
@@ -133,6 +175,7 @@ export default function Chats() {
                     (!id) ?
                         <SelectChat /> :
                         <MessageList
+                            myUsername={myProfile.username}
                             myId={myProfile._id}
                             chatId={id}
                             drawerWidth={drawerWidth}

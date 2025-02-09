@@ -4,6 +4,29 @@ import { User } from "../models/user.model.js";
 import { Chat } from "../models/chat.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
+import { emitSocketEvent } from '../socket/index.js';
+import { CHAT_EVENTS } from "../constants.js";
+
+const chatCommonAggregation = () => {
+    return [
+        {
+            $lookup: {
+                from : "users",
+                localField: "participants",
+                foreignField: "_id",
+                as: "participants",
+                pipeline: [
+                    {
+                        $project: {
+                            fullname: 1,
+                            username: 1
+                        }
+                    }
+                ]
+            }
+        },
+    ]
+}
 
 const createNewChat = asyncHandler(async (req, res) => {
 
@@ -42,6 +65,27 @@ const createNewChat = asyncHandler(async (req, res) => {
             admin: req.user._id
         })
 
+        const newChat = await Chat.aggregate([
+            {
+                $match: {_id: chat._id}
+            },
+            ...chatCommonAggregation()
+        ])
+        
+        const participantList = newChat[0].participants;
+    
+        participantList.forEach((p)=>{
+            if(p._id.toString() === req.user._id.toString())
+                return;
+        
+            emitSocketEvent(
+                req,
+                p._id.toString(),
+                CHAT_EVENTS.NEW_CHAT,
+                newChat[0]
+            )
+        })
+
         return res.status(201).json(
             new ApiResponse(201,chat,"New chat created successfully")
         )
@@ -64,8 +108,29 @@ const createNewChat = asyncHandler(async (req, res) => {
         participants: [participantId, req.user._id],
     })
 
+    const newChat = await Chat.aggregate([
+        {
+            $match: {_id: newchat._id}
+        },
+        ...chatCommonAggregation()
+    ])
+    
+    const participantList = newChat[0].participants;
+
+    participantList.forEach((p)=>{
+        if(p._id.toString() === req.user._id.toString())
+            return;
+    
+        emitSocketEvent(
+            req,
+            p._id.toString(),
+            CHAT_EVENTS.NEW_CHAT,
+            newChat[0]
+        )
+    })
+
     return res.status(201).json(
-        new ApiResponse(201,newchat,"New chat created successfully")
+        new ApiResponse(201,newChat[0],"New chat created successfully")
     )
 })
 
@@ -76,21 +141,9 @@ const getAllChats = asyncHandler(async (req, res) => {
             $match: { participants: { $in: [req.user._id]} }
         },
         {
-            $lookup: {
-                from : "users",
-                localField: "participants",
-                foreignField: "_id",
-                as: "participants",
-                pipeline: [
-                    {
-                        $project: {
-                            fullname: 1,
-                            username: 1
-                        }
-                    }
-                ]
-            }
+            $sort: { updatedAt: -1}
         },
+        ...chatCommonAggregation()
     ])
 
     return res.status(200).json(
@@ -109,26 +162,11 @@ const getChatDetails = asyncHandler(async (req, res) => {
                 _id: new mongoose.Types.ObjectId(String(id)) 
             }
         },
-        {
-            $lookup: {
-                from : "users",
-                localField: "participants",
-                foreignField: "_id",
-                as: "participants",
-                pipeline: [
-                    {
-                        $project: {
-                            fullname: 1,
-                            username: 1
-                        }
-                    }
-                ]
-            }
-        },
+        ...chatCommonAggregation()
     ])
 
     return res.status(200).json(
-        new ApiResponse(200,chats,"Chats fetched successfully")
+        new ApiResponse(200,chats,"Chat details fetched successfully")
     )
 })
 

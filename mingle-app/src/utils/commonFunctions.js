@@ -51,3 +51,31 @@ export function stringAvatar(name) {
         children: `${name?.split(' ')[0][0]}`,
     };
 }
+
+export const getChatName = (chat,myUsername) => {
+    if(chat.isGroupChat){
+        return chat.name
+    }
+    const otherMember = chat.participants.filter((m)=>m.username !== myUsername)
+    return otherMember[0].fullname;
+}
+
+export const CHAT_EVENTS = {
+    CONNECTED: "connected",
+
+    DISCONNECT: "disconnect",
+
+    JOIN_CHAT: "joinChat",
+
+    LEAVE_CHAT: "leaveChat",
+
+    MSG_RECEIVED: "messageReceived",
+
+    NEW_CHAT: "newChat",
+
+    STOP_TYPING: "stopTyping",
+
+    TYPING: "typing",
+    
+    SOCKET_ERROR : "socketError",
+}

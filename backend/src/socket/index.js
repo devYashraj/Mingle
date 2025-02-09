@@ -56,11 +56,15 @@ const initializeSocketIO = (io) => {
             mountJoinChat(socket);
             mountStartTyping(socket);
             mountStopTyping(socket);
+
+            socket.on(CHAT_EVENTS.DISCONNECT, ()=>{
+                console.log(`${user.username} has disconnected`);
+            })
         } 
         catch (error) {
             socket.emit(
                 CHAT_EVENTS.SOCKET_ERROR,
-                error?.message || "Error during connecting to socker"
+                error?.message || "Error during connecting to socket"
             )
         }
     })

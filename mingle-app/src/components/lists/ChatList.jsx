@@ -8,47 +8,12 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { Badge, Container } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import { stringAvatar } from "../../utils/commonFunctions.js"
-import { getAllChats } from '../../api/chats.api.js';
-import Loading from '../../utils/Loading.jsx';
+import { stringAvatar, getChatName } from "../../utils/commonFunctions.js"
 import { getFullDate } from '../../utils/formatter.js';
 
-export default function ChatList({myUsername, unreadMessages, setUnreadMessages}) {
+export default function ChatList({chatList, myUsername, unreadMessages}) {
 
     const navigate = useNavigate();
-    const [chatList, setChatList] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    const getChats = async () => {
-        try {
-            setLoading(true);
-            const response = await getAllChats();
-            setChatList(response.data)
-        } 
-        catch (error) 
-        {
-
-        }
-        finally{ 
-            setLoading(false);
-        }
-    }
-
-    useEffect(()=>{
-        getChats();
-    },[])
-
-    const getChatName = (chat) => {
-        if(chat.isGroupChat){
-            return chat.name
-        }
-        const otherMember = chat.participants.filter((m)=>m.username !== myUsername)
-        return otherMember[0].fullname;
-    }
-
-    if(loading)
-        return <Loading color='secondary'/>
 
     return (
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
@@ -75,13 +40,13 @@ export default function ChatList({myUsername, unreadMessages, setUnreadMessages}
                             }
                         >
                             <ListItemAvatar>
-                                <Avatar {...stringAvatar(c.name)} variant='square'/>
+                                <Avatar {...stringAvatar(getChatName(c,myUsername))} variant='square'/>
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
                                     <>
                                         <Typography variant='h6'>
-                                            {getChatName(c)}
+                                            {getChatName(c,myUsername)}
                                         </Typography>
                                     </>
                                 }

@@ -14,11 +14,12 @@ import BasicAlert from '../alerts/BasicAlert';
 import { createNewChat } from '../../api/chats.api.js';
 import { useNavigate } from 'react-router';
 
-export default function FormDialog() {
+export default function NewChatForm({setChatList}) {
     const [open, setOpen] = React.useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [alertMsg, setAlertMsg] = useState("");
     const [alertOpen, setAlertOpen] = useState(false);
+    const [group, setGroup] = useState(false);
     const navigate = useNavigate();
 
     const handleClickOpen = () => {
@@ -47,7 +48,7 @@ export default function FormDialog() {
                         const formJsonData = Object.fromEntries(formData.entries());
                         formJsonData.members = selectedUsers;
 
-                        if (formJsonData.name.trim() === "") {
+                        if (group && formJsonData.name.trim() === "") {
                             setAlertMsg("Chat name is required");
                             setAlertOpen(true);
                             return;
@@ -70,8 +71,11 @@ export default function FormDialog() {
                         try {
                             const response = await createNewChat(formJsonData);  
                             if(response.statuscode === 201){
+                                const newChat = response.data;
+                                setChatList((prev)=>[newChat, ...prev]);
                                 const {_id} = response.data;
                                 navigate(`/chats/${_id}`)                                
+                                handleClose();
                             }
                         } 
                         catch (error) {
@@ -87,15 +91,16 @@ export default function FormDialog() {
                 <DialogContent>
                     <Stack direction='column' spacing={2}>
                         <FormControlLabel
-                            control={<Switch name='isGroupChat' />}
+                            control={<Switch name='isGroupChat' value={group} onChange={()=>setGroup(!group)}/>}
                             label="Group Chat?"
 
                         />
                         <TextField
                             name="name"
-                            label="Chat Name"
+                            label="Group Name"
                             fullWidth
                             variant="outlined"
+                            disabled={!group}
                         />
                         <UserSearch selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} />
                     </Stack>

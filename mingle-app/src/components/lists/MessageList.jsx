@@ -7,13 +7,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Loading from "../../utils/Loading";
 import { useState, useEffect } from "react";
 import { getFullDate } from '../../utils/formatter.js';
-import { stringAvatar } from "../../utils/commonFunctions.js"
+import { stringAvatar, getChatName } from "../../utils/commonFunctions.js"
 import { getChatDetails } from "../../api/chats.api.js"
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-export default function MessageList({ myId, chatId, drawerWidth, handleDrawerToggle }) {
+export default function MessageList({myUsername, myId, chatId, drawerWidth, handleDrawerToggle }) {
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [messages, setMessages] = useState([]);
     const [currentChat, setCurrentChat] = useState({});
 
@@ -24,16 +24,28 @@ export default function MessageList({ myId, chatId, drawerWidth, handleDrawerTog
     }
 
     const getCurrentChatDetails = async (id) => {
-        
-        const response = await getChatDetails(id);
+        const response = await getChatDetails(id);        
         setCurrentChat(response.data[0]);
+    }
+
+    const getInitData = async(id) => {
+        try {
+            await getCurrentChatDetails(id);
+            getMessages(id);
+        } 
+        catch (error) {
+            
+        }
+        finally{
+            
+            
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
         setLoading(true);
-        getMessages(chatId);
-        getCurrentChatDetails(chatId);
-        setLoading(false)
+        getInitData(chatId);
     }, [chatId])
 
     if (loading)
@@ -64,13 +76,13 @@ export default function MessageList({ myId, chatId, drawerWidth, handleDrawerTog
                         <Stack direction="row" spacing={2}>
                             <Avatar {...stringAvatar(currentChat.name)} />
                             <Typography variant='h6' component="div">
-                                {currentChat.name}
+                                {getChatName(currentChat,myUsername)}
                                 <Typography variant='subtitle2'>
                                     {`Last active ${getFullDate(currentChat.updatedAt)}`}
                                 </Typography>
                             </Typography>
                             <IconButton color=''>
-                                <InfoIcon/>
+                                <InfoOutlinedIcon/>
                             </IconButton>
                         </Stack>
                     </Typography>
