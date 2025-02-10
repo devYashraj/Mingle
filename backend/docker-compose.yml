@@ -1,11 +1,15 @@
 services:
+  nginx:
+    image: nginx:alpine-slim
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
   node-app:
     build:
       context: .
       args:
         NODE_ENV: production
-    ports:
-      - "3000:3000"
     env_file:
       - ./.env
     command: node src/index.js
