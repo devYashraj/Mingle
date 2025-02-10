@@ -9,6 +9,7 @@ import { Like } from '../models/like.model.js';
 import { ALLOWED_IMAGE_TYPES } from '../constants.js';
 import path from 'path';
 import mongoose from 'mongoose';
+import redis from '../redis/index.js';
 
 const uploadImage = asyncHandler(async (req, res) => {
 
@@ -244,7 +245,19 @@ const getFeedPosts = asyncHandler(async (req, res) => {
         limit: 10
     }
 
+    const key = `feed:${req.user._id.toString()}:${JSON.stringify(options)}`;
+
+    const cachedPosts = await redis.get(key);
+    
+    if(cachedPosts){
+        return res.status(200).json(
+            new ApiResponse(200,JSON.parse(cachedPosts),"Feed fetched successfully")
+        )
+    }
     const posts = await Post.aggregatePaginate(aggregate,options);
+
+    await redis.set(key,JSON.stringify(posts))
+    await redis.expire(key,10);
 
     return res.status(200).json(
         new ApiResponse(200,posts,"Feed fetched successfully")
@@ -325,7 +338,19 @@ const getLikedPosts = asyncHandler(async (req, res) => {
         limit: 10
     }
 
+    const key = `likedPosts:${req.user._id.toString()}:${JSON.stringify(options)}`;
+
+    const cachedPosts = await redis.get(key);
+    
+    if(cachedPosts){
+        return res.status(200).json(
+            new ApiResponse(200,JSON.parse(cachedPosts),"Liked posts fetched successfully")
+        )
+    }
     const likedPosts = await Like.aggregatePaginate(aggregate,options);
+
+    await redis.set(key,JSON.stringify(likedPosts));
+    await redis.expire(key,10);
 
     return res.status(200).json(
         new ApiResponse(200,likedPosts,"Liked posts fetched successfully")
@@ -415,6 +440,14 @@ const getPostsByTag = asyncHandler(async (req, res) => {
 
 const getTrendingData = asyncHandler(async( req, res) => {
 
+    const cachedValue = await redis.get('mingleTrending');
+
+    if(cachedValue){
+        return res.status(200).json(
+            new ApiResponse(200,JSON.parse(cachedValue), "Trending data fetched successfully")
+        )
+    }
+
     const trendingPosts = await Post.aggregate([
         {
             $lookup:{
@@ -483,8 +516,13 @@ const getTrendingData = asyncHandler(async( req, res) => {
         }
     ])
 
+    const mingleTrending = { trendingPosts, trendingTags};
+    
+    await redis.set('mingleTrending',JSON.stringify(mingleTrending));
+    await redis.expire('mingleTrending',60);
+
     return res.status(200).json(
-        new ApiResponse(200,{ trendingPosts, trendingTags}, "Trending data fetched successfully")
+        new ApiResponse(200,mingleTrending, "Trending data fetched successfully")
     )
 })
 

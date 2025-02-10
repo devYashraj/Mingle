@@ -5,6 +5,7 @@ import { Comment } from '../models/comment.model.js';
 import { Post } from '../models/post.model.js';
 import { User } from '../models/user.model.js';
 import { Like} from '../models/like.model.js';
+import redis from '../redis/index.js';
 
 const postComment = asyncHandler(async (req, res) => {
 
@@ -233,7 +234,6 @@ const getUserComments = asyncHandler(async(req, res) => {
 
 const getLikedComments = asyncHandler(async(req, res) => {
     
-    const { id } = req.params;
     const { page = 1} = req.query;
 
 
@@ -292,8 +292,20 @@ const getLikedComments = asyncHandler(async(req, res) => {
         limit: 5
     }
 
+    const key = `likedComments:${req.user._id.toString()}:${JSON.stringify(options)}`;
+    const cachedComments = await redis.get(key);
+
+    if(cachedComments){
+        return res.status(200).json(
+            new ApiResponse(200,JSON.parse(cachedComments),"Comments fetched successfully")
+        )
+    }
+
     const comments = await Like.aggregatePaginate(aggregate,options);
 
+    await redis.set(key,JSON.stringify(comments));
+    await redis.expire(key,10);
+    
     return res.status(200).json(
         new ApiResponse(200,comments,"Comments fetched successfully")
     )
