@@ -1,6 +1,6 @@
 # Mingle
 
-A Social Networking and Chat application
+<h2>A Social Networking and Chat application</h2>
 
 - 👨‍💻 Tech stack :-
   
@@ -11,3 +11,5 @@ A Social Networking and Chat application
       Databases - MongoDB, Redis, Cloudinary CDN
 
 - Database Models :-
+  
+![diagram-export-2-20-2025-10_07_46-AM](https://github.com/user-attachments/assets/102990e8-8909-4986-b1d7-8f146fd0577a)
